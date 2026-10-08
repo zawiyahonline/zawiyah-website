@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resend Configuration | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Secure administrative Resend configuration and real Gmail OTP delivery setup." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23baed2c'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-tealbg text-white font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Ambient Glow & Canvas -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    <canvas id="dotsCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+  </div>
+
+  <!-- HEADER -->
+  <header class="relative z-50 w-full pt-5 pb-4 px-4 sm:px-8 max-w-7xl mx-auto flex items-center justify-between border-b border-white/10">
+    <a href="index.html" class="group flex items-center gap-2.5 text-white font-display font-semibold text-xl tracking-tight">
+      <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+      <span>Zawiyah</span>
+      <span class="text-[11px] font-sans font-medium px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase tracking-wider ml-1">Resend Configuration</span>
+    </a>
+    <a href="admin-login.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-200 hover:text-white bg-white/5 hover:bg-white/15 border border-white/15 rounded-full transition-all">
+      <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+      <span>Admin Login</span>
+    </a>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="relative z-10 flex-1 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-lg bg-tealbg-800/90 backdrop-blur-xl border border-white/20 rounded-3xl p-7 sm:p-9 shadow-2xl space-y-6">
+      
+      <!-- Heading -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-400/15 border border-amber-400/30 text-amber-300 shadow-inner mb-1">
+          <i data-lucide="mail-check" class="w-7 h-7"></i>
+        </div>
+        <h1 class="text-2xl font-display font-semibold text-white tracking-tight">
+          Resend Configuration
+        </h1>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Connect your Resend API key to enable real Gmail OTP delivery for <strong class="text-white">zawiyahonlineislamicschool@gmail.com</strong>.
+        </p>
+      </div>
+
+      <!-- Security Notice -->
+      <div class="p-3.5 rounded-2xl bg-tealbg-900/80 border border-white/10 text-xs text-tealtext-300 space-y-1 text-left">
+        <p class="text-white font-semibold flex items-center gap-1.5">
+          <i data-lucide="shield-check" class="w-4 h-4 text-accent-lime"></i>
+          <span>Server-Side Environment Security</span>
+        </p>
+        <p class="text-[11px] leading-relaxed">
+          Your key is saved directly to your secure server environment (<code class="text-amber-300 font-mono">.env</code>). It is never saved in browser storage (<code class="text-tealtext-400">localStorage</code>) and never exposed to client-side scripts.
+        </p>
+      </div>
+
+      <!-- Editable Resend Configuration Form -->
+      <form id="resendConfigForm" class="space-y-4 text-left" autocomplete="off">
+        
+        <div class="space-y-1.5">
+          <label for="resendApiKeyInput" class="block text-xs font-semibold text-tealtext-100">
+            Resend API Key
+          </label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="key-round" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="password" 
+              id="resendApiKeyInput" 
+              name="resend_api_key"
+              placeholder="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+              required
+              autofocus
+              class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-tealbg-900/95 border border-white/25 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/30 transition-all font-mono"
+            />
+            <button type="button" id="toggleKeyVisibilityBtn" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400 hover:text-white cursor-pointer" title="Toggle visibility">
+              <i data-lucide="eye" id="toggleKeyIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[10px] text-tealtext-400">Starts with <code class="text-accent-lime font-mono">re_</code> (Created in your Resend Dashboard)</p>
+        </div>
+
+        <!-- Feedback Alert Box -->
+        <div id="setupAlert" class="hidden p-3.5 rounded-2xl text-xs space-y-1 border">
+          <p id="setupAlertText" class="font-medium"></p>
+        </div>
+
+        <!-- Save & Connect Resend Button -->
+        <button 
+          type="submit" 
+          id="saveKeyBtn"
+          class="w-full py-3.5 px-6 rounded-full text-xs font-bold tracking-widest uppercase text-tealbg-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-md hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span id="saveKeyBtnText">Save & Connect Resend</span>
+          <i data-lucide="check-circle" class="w-4 h-4" id="saveKeyBtnIcon"></i>
+        </button>
+
+      </form>
+
+      <!-- Post-Connection Testing Section -->
+      <div id="testingSection" class="hidden pt-4 border-t border-white/10 space-y-3.5 text-center animate-fade-in">
+        <div class="p-3.5 rounded-2xl bg-accent-lime/10 border border-accent-lime/30 text-left space-y-1">
+          <p class="text-xs font-bold text-accent-lime flex items-center gap-1.5">
+            <i data-lucide="badge-check" class="w-4 h-4"></i>
+            <span>Resend connected successfully.</span>
+          </p>
+          <p class="text-[11px] text-tealtext-200">
+            Target Email: <strong class="text-white">zawiyahonlineislamicschool@gmail.com</strong>
+          </p>
+        </div>
+
+        <!-- Test OTP Email Button -->
+        <button 
+          type="button" 
+          id="testOtpEmailBtn"
+          class="w-full py-3.5 px-6 rounded-full text-xs font-bold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <i data-lucide="send" class="w-4 h-4" id="testBtnIcon"></i>
+          <span id="testBtnText">Test OTP Email</span>
+        </button>
+
+        <!-- Test Email Status Alert -->
+        <div id="testAlert" class="hidden p-3.5 rounded-2xl text-xs space-y-1 border text-left">
+          <p id="testAlertText" class="font-normal"></p>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="pt-2 flex items-center justify-between gap-2 text-xs">
+          <a href="admin-forgot-password.html" class="flex-1 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium border border-white/15 transition-all text-center">
+            Forgot Password Flow &rarr;
+          </a>
+          <a href="admin-login.html" class="flex-1 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium border border-white/15 transition-all text-center">
+            Admin Login &rarr;
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 w-full py-4 text-center border-t border-white/10 text-xs text-tealtext-400">
+    &copy; 2026 Zawiyah Online Islamic School. All Rights Reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+
+      const form = document.getElementById('resendConfigForm');
+      const input = document.getElementById('resendApiKeyInput');
+      const toggleBtn = document.getElementById('toggleKeyVisibilityBtn');
+      const toggleIcon = document.getElementById('toggleKeyIcon');
+      const alertBox = document.getElementById('setupAlert');
+      const alertText = document.getElementById('setupAlertText');
+      const saveBtn = document.getElementById('saveKeyBtn');
+      const saveBtnText = document.getElementById('saveKeyBtnText');
+      const saveBtnIcon = document.getElementById('saveKeyBtnIcon');
+      
+      const testingSection = document.getElementById('testingSection');
+      const testOtpBtn = document.getElementById('testOtpEmailBtn');
+      const testBtnText = document.getElementById('testBtnText');
+      const testBtnIcon = document.getElementById('testBtnIcon');
+      const testAlert = document.getElementById('testAlert');
+      const testAlertText = document.getElementById('testAlertText');
+
+      // Toggle password visibility
+      if (toggleBtn && input) {
+        toggleBtn.addEventListener('click', () => {
+          const isPass = input.type === 'password';
+          input.type = isPass ? 'text' : 'password';
+          if (toggleIcon) {
+            toggleIcon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
+            if (window.lucide) window.lucide.createIcons();
+          }
+        });
+      }
+
+      function getApiUrl(endpoint) {
+        return endpoint;
+      }
+
+      // 1. Submit Form: Save & Connect Resend
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (alertBox) alertBox.classList.add('hidden');
+          if (testAlert) testAlert.classList.add('hidden');
+
+          const keyVal = input ? input.value.trim() : '';
+          if (!keyVal) {
+            showAlert('Please enter your Resend API Key.', 'error');
+            return;
+          }
+
+          if (saveBtn) {
+            saveBtn.disabled = true;
+            if (saveBtnText) saveBtnText.textContent = 'Verifying & Connecting...';
+            if (saveBtnIcon) saveBtnIcon.setAttribute('data-lucide', 'loader-2');
+            if (window.lucide) window.lucide.createIcons();
+          }
+
+          try {
+            const resp = await fetch(getApiUrl('/api/admin/save-resend-key'), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ resend_api_key: keyVal })
+            });
+            const data = await resp.json().catch(() => ({}));
+
+            if (saveBtn) {
+              saveBtn.disabled = false;
+              if (saveBtnText) saveBtnText.textContent = 'Save & Connect Resend';
+              if (saveBtnIcon) saveBtnIcon.setAttribute('data-lucide', 'check-circle');
+              if (window.lucide) window.lucide.createIcons();
+            }
+
+            if (resp.ok && data.success) {
+              // Securely clear/mask key in browser input, never store in localStorage
+              if (input) {
+                input.value = '';
+                input.placeholder = '•••••••••••••••••••••••••••••••• (Connected)';
+              }
+
+              showAlert(data.message || 'Resend connected successfully.', 'success');
+              if (testingSection) testingSection.classList.remove('hidden');
+              if (window.lucide) window.lucide.createIcons();
+            } else {
+              showAlert(data.message || 'Failed to connect Resend. Please check your API key.', 'error');
+            }
+          } catch (err) {
+            if (saveBtn) {
+              saveBtn.disabled = false;
+              if (saveBtnText) saveBtnText.textContent = 'Save & Connect Resend';
+              if (saveBtnIcon) saveBtnIcon.setAttribute('data-lucide', 'check-circle');
+              if (window.lucide) window.lucide.createIcons();
+            }
+            showAlert('Network error connecting to local server. Please ensure server is running.', 'error');
+          }
+        });
+      }
+
+      // 2. Test OTP Email Button
+      if (testOtpBtn) {
+        testOtpBtn.addEventListener('click', async () => {
+          if (testAlert) testAlert.classList.add('hidden');
+
+          testOtpBtn.disabled = true;
+          if (testBtnText) testBtnText.textContent = 'Sending Real OTP Email...';
+          if (testBtnIcon) testBtnIcon.setAttribute('data-lucide', 'loader-2');
+          if (window.lucide) window.lucide.createIcons();
+
+          try {
+            const resp = await fetch(getApiUrl('/api/admin/test-otp-email'), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({})
+            });
+            const data = await resp.json().catch(() => ({}));
+
+            testOtpBtn.disabled = false;
+            if (testBtnText) testBtnText.textContent = 'Test OTP Email';
+            if (testBtnIcon) testBtnIcon.setAttribute('data-lucide', 'send');
+            if (window.lucide) window.lucide.createIcons();
+
+            if (resp.ok && data.success) {
+              showTestAlert(data.message || 'Real OTP email sent to zawiyahonlineislamicschool@gmail.com! Please check your Gmail inbox.', 'success');
+            } else {
+              showTestAlert(data.message || 'Failed to send test email. Please check your Resend configuration.', 'error');
+            }
+          } catch (err) {
+            testOtpBtn.disabled = false;
+            if (testBtnText) testBtnText.textContent = 'Test OTP Email';
+            if (testBtnIcon) testBtnIcon.setAttribute('data-lucide', 'send');
+            if (window.lucide) window.lucide.createIcons();
+            showTestAlert('Network error while dispatching test OTP.', 'error');
+          }
+        });
+      }
+
+      function showAlert(msg, type = 'error') {
+        if (!alertBox || !alertText) return;
+        alertText.textContent = msg;
+        if (type === 'error') {
+          alertBox.className = 'p-3.5 rounded-2xl text-xs space-y-1 bg-red-500/15 border border-red-400/40 text-red-300 animate-fade-in block';
+        } else {
+          alertBox.className = 'p-3.5 rounded-2xl text-xs space-y-1 bg-accent-lime/15 border border-accent-lime/40 text-accent-lime font-semibold animate-fade-in block';
+        }
+      }
+
+      function showTestAlert(msg, type = 'error') {
+        if (!testAlert || !testAlertText) return;
+        testAlertText.textContent = msg;
+        if (type === 'error') {
+          testAlert.className = 'p-3.5 rounded-2xl text-xs space-y-1 bg-red-500/15 border border-red-400/40 text-red-300 animate-fade-in block';
+        } else {
+          testAlert.className = 'p-3.5 rounded-2xl text-xs space-y-1 bg-accent-lime/15 border border-accent-lime/40 text-accent-lime font-semibold animate-fade-in block';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

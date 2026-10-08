@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Portal | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Dedicated educator workspace for Zawiyah Online Islamic School faculty members to oversee classes, track student progress, and manage live learning schedules." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c188d5'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .teacher-nav-btn.active {
+      background-color: #baed2c;
+      color: #083239;
+      font-weight: 700;
+    }
+    .teacher-nav-btn {
+      color: #DCEDF2;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+    .teacher-nav-btn:hover:not(.active) {
+      background-color: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+    }
+    .t-card {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .t-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px -8px rgba(5, 34, 39, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-tealbg text-white font-sans antialiased selection:bg-white selection:text-tealbg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Ambient Glow & Interactive Canvas Dots -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    <canvas id="dotsCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+  </div>
+
+  <!-- TEACHER PORTAL TOP NAVBAR -->
+  <header class="relative z-50 w-full pt-5 pb-4 px-4 sm:px-8 md:px-12 max-w-7xl mx-auto flex items-center justify-between transition-all duration-300 border-b border-white/10">
+    <!-- Brand Logo -->
+    <a href="index.html" class="group flex items-center gap-2.5 text-white font-display font-semibold text-xl tracking-tight py-1">
+      <img src="assets/logo.png?v=6" alt="Zawiyah Online Islamic School" class="w-[130px] sm:w-[140px] md:w-[155px] h-auto object-contain select-none" />
+      <span class="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-white/20 text-white border border-white/30 uppercase tracking-wider ml-1">Faculty</span>
+    </a>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Public Website Link -->
+      <a href="index.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-200 hover:text-white bg-white/5 hover:bg-white/15 border border-white/15 rounded-full transition-all duration-200">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Main Website</span>
+      </a>
+
+      <!-- Logged In Controls (Shown only after teacher login) -->
+      <div id="tNavUserArea" class="hidden items-center gap-3">
+        <!-- Notification Button -->
+        <button id="tNavNotifyBtn" class="relative p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent-lime"></span>
+        </button>
+
+        <!-- Teacher Profile Pill -->
+        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/15 border border-white/20">
+          <div id="tNavAvatar" class="w-6 h-6 rounded-full bg-accent-lavender text-tealbg-950 font-bold text-xs flex items-center justify-center font-display">
+            TC
+          </div>
+          <span id="tNavTeacherName" class="text-xs font-medium text-white hidden sm:inline">Teacher</span>
+        </div>
+
+        <!-- Logout Button -->
+        <button id="tLogoutBtn" title="Logout" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-tealbg bg-white hover:bg-tealtext-100 rounded-full transition-all shadow-sm">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 1. TEACHER LOGIN VIEW                      -->
+  <!-- ========================================== -->
+  <main id="tLoginView" class="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-10">
+    <div class="w-full max-w-md bg-tealbg-800/90 backdrop-blur-xl border border-white/20 rounded-3xl p-7 sm:p-9 shadow-2xl space-y-6">
+      
+      <!-- Login Card Header -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 border border-white/20 text-accent-lavender shadow-inner mb-1">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-display font-semibold text-white tracking-tight">
+          Teacher Login
+        </h1>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Manage your classes, students and learning progress.
+        </p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="tLoginForm" class="space-y-4" novalidate autocomplete="off">
+        
+        <!-- Name / Username Field -->
+        <div class="space-y-1.5 text-left">
+          <label for="teacherIdentifier" class="block text-xs font-medium text-tealtext-100">
+            Name / Username
+          </label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="user-check" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              id="teacherIdentifier" 
+              name="teacherIdentifier"
+              placeholder="Enter your Name" 
+              required
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime focus:ring-1 focus:ring-accent-lime transition-all"
+            />
+          </div>
+          <p id="tIdError" class="hidden text-[11px] text-accent-lavender">Please enter your Name / Username.</p>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5 text-left">
+          <div class="flex items-center justify-between">
+            <label for="teacherPassword" class="block text-xs font-medium text-tealtext-100">
+              Password
+            </label>
+            <button type="button" id="tForgotPassBtn" class="text-[11px] text-accent-lime hover:underline">
+              Forgot Password?
+            </button>
+          </div>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="password" 
+              id="teacherPassword" 
+              name="teacherPassword"
+              placeholder="Enter Password" 
+              required
+              class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime focus:ring-1 focus:ring-accent-lime transition-all"
+            />
+            <button type="button" id="tTogglePasswordBtn" aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400 hover:text-white">
+              <i data-lucide="eye" id="tToggleEyeIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="tPassError" class="hidden text-[11px] text-accent-lavender">Please enter your password.</p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center gap-2 text-left">
+          <input type="checkbox" id="tRememberMe" checked class="w-4 h-4 rounded text-tealbg-600 focus:ring-accent-lime accent-lime cursor-pointer" />
+          <label for="tRememberMe" class="text-xs text-tealtext-200 cursor-pointer select-none">Remember this device</label>
+        </div>
+
+        <!-- Status Feedback Alert Container -->
+        <div id="tLoginStatusAlert" class="hidden p-4 rounded-2xl text-left space-y-2 border">
+          <div class="flex items-center gap-2">
+            <span id="tAlertDot" class="w-2.5 h-2.5 rounded-full bg-accent-lime"></span>
+            <h4 id="tAlertTitle" class="text-xs font-bold uppercase tracking-wider text-accent-lime">Notification</h4>
+          </div>
+          <p id="tAlertMsg" class="text-xs text-tealtext-100 leading-relaxed font-normal"></p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button 
+            type="submit" 
+            id="tLoginSubmitBtn"
+            class="w-full py-3 px-6 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2"
+          >
+            <span>Login</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- New Teacher Registration & Demo Selection Section -->
+      <div class="pt-5 border-t border-white/10 text-center space-y-2.5">
+        <p class="text-xs text-tealtext-200">
+          New Teacher / Candidate?
+        </p>
+        <a 
+          href="teacher-selection-demo.html" 
+          class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wide text-white bg-gradient-to-r from-purple-600 to-accent-lavender hover:brightness-110 border border-white/20 transition-all shadow-md"
+        >
+          <i data-lucide="video" class="w-3.5 h-3.5 text-white"></i>
+          <span>Apply for Teacher Selection Demo Class</span>
+        </a>
+        <a 
+          href="teacher-register.html" 
+          class="inline-flex items-center justify-center gap-2 w-full py-2 px-4 rounded-full text-xs font-medium tracking-wide text-tealtext-200 bg-white/10 hover:bg-white/20 border border-white/10 transition-all shadow-sm"
+        >
+          <i data-lucide="user-plus" class="w-3.5 h-3.5 text-accent-lime"></i>
+          <span>Create Teacher Account</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 2. TEACHER DASHBOARD VIEW                  -->
+  <!-- ========================================== -->
+  <main id="tDashboardView" class="hidden relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 md:px-12 py-8 space-y-8">
+    
+    <!-- Top Welcome Header Profile Area -->
+    <div class="bg-tealbg-800/80 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 text-left">
+      
+      <!-- Left: Teacher Info -->
+      <div class="flex items-center gap-4 sm:gap-5">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white/10 border-2 border-accent-lavender p-1 shadow-md flex-shrink-0 flex items-center justify-center">
+          <div id="tHeaderAvatar" class="w-full h-full rounded-2xl bg-tealbg-900 flex items-center justify-center text-accent-lavender font-display font-bold text-2xl">
+            TC
+          </div>
+        </div>
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-accent-lavender/20 border border-accent-lavender/30 text-[10px] font-semibold text-white uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+            <span id="tHeaderBadge">Faculty Member</span>
+          </div>
+          <h1 id="tWelcomeHeading" class="text-2xl sm:text-3xl font-display font-semibold text-white tracking-tight">
+            Welcome, Teacher!
+          </h1>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Department: <span id="tHeaderDept" class="text-white font-medium">Islamic Studies</span> • <span id="tHeaderSummaryMeta">0 Batches</span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <button type="button" class="teacher-nav-btn active px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="dashboard">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        <span>Dashboard</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="classes">
+        <i data-lucide="book-open" class="w-4 h-4"></i>
+        <span>My Classes</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="students">
+        <i data-lucide="users" class="w-4 h-4"></i>
+        <span>Students</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="attendance">
+        <i data-lucide="check-square" class="w-4 h-4"></i>
+        <span>Attendance</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="schedule">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span>Schedule</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="assignments">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>Assignments</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="materials">
+        <i data-lucide="folder" class="w-4 h-4"></i>
+        <span>Learning Materials</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="messages">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>Messages</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="notifications">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+        <span>Notifications</span>
+      </button>
+      <button type="button" class="teacher-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="profile">
+        <i data-lucide="user" class="w-4 h-4"></i>
+        <span>Profile</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: DASHBOARD OVERVIEW -->
+    <section id="t-tab-dashboard" class="t-tab-content space-y-6 text-left">
+      <!-- Summary Stat Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        
+        <div class="t-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs font-medium text-tealbg-700">My Classes</span>
+            <p id="tStatClasses" class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">0 Batches</p>
+            <span class="text-[11px] text-tealbg-600">Assigned Batches</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="t-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs font-medium text-tealbg-700">Total Students</span>
+            <p id="tStatStudents" class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">0</p>
+            <span class="text-[11px] text-tealbg-600">Enrolled Students</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-accent-lavender/25 text-tealbg-950 flex items-center justify-center">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="t-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs font-medium text-tealbg-700">Today's Classes</span>
+            <p id="tStatTodayClasses" class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">0 Sessions</p>
+            <span class="text-[11px] text-tealbg-600">Scheduled Today</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+            <i data-lucide="video" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="t-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs font-medium text-tealbg-700">Pending Reviews</span>
+            <p id="tStatAssignments" class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">0</p>
+            <span class="text-[11px] text-tealbg-600">Submissions</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+            <i data-lucide="file-text" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2 Column: Today's Schedule & Recent Notifications -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Today's Schedule -->
+        <div class="lg:col-span-7 bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <h2 class="text-lg font-display font-semibold text-white flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-accent-lime"></i>
+              <span>Today's Classes</span>
+            </h2>
+            <button type="button" onclick="switchTeacherTab('schedule')" class="text-xs text-accent-lime hover:underline font-medium">
+              Full Schedule →
+            </button>
+          </div>
+
+          <div id="tTodayScheduleList" class="space-y-3">
+            <!-- Rendered dynamically by teacher.js -->
+          </div>
+        </div>
+
+        <!-- Recent Notifications Snapshot -->
+        <div class="lg:col-span-5 bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <h2 class="text-lg font-display font-semibold text-white flex items-center gap-2">
+              <i data-lucide="bell" class="w-4 h-4 text-accent-lavender"></i>
+              <span>Recent Notifications</span>
+            </h2>
+            <button type="button" onclick="switchTeacherTab('notifications')" class="text-xs text-accent-lime hover:underline font-medium">
+              View All →
+            </button>
+          </div>
+
+          <div id="tRecentNotificationsList" class="space-y-3">
+            <!-- Rendered dynamically by teacher.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: MY CLASSES -->
+    <section id="t-tab-classes" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Assigned Batches & Classes
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Your active teaching batches and enrolled student allocations.
+        </p>
+      </div>
+
+      <div id="tClassesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 3: STUDENTS -->
+    <section id="t-tab-students" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Enrolled Students Directory
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Students currently enrolled in your classes.
+        </p>
+      </div>
+
+      <div id="studentsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 4: ATTENDANCE SYSTEM -->
+    <section id="t-tab-attendance" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Teacher Attendance System
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Select a class and date to record attendance.
+        </p>
+      </div>
+
+      <div class="bg-white/95 text-tealbg-950 p-6 sm:p-8 rounded-3xl shadow-xl border border-white/40 space-y-6">
+        <div id="attendanceSheetList" class="space-y-3">
+          <!-- Rendered dynamically by teacher.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: SCHEDULE -->
+    <section id="t-tab-schedule" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Weekly Teaching Schedule
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Your configured teaching schedule and classroom slots.
+        </p>
+      </div>
+
+      <div id="weeklyScheduleContainer" class="bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 6: ASSIGNMENTS -->
+    <section id="t-tab-assignments" class="t-tab-content hidden space-y-6 text-left">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Assignments & Reviews
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Publish coursework, listen to student recitations, and assign feedback.
+          </p>
+        </div>
+        <button type="button" onclick="openCreateAssignmentModal()" class="px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Create Assignment</span>
+        </button>
+      </div>
+
+      <div id="assignmentsList" class="space-y-4">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 7: LEARNING MATERIALS -->
+    <section id="t-tab-materials" class="t-tab-content hidden space-y-6 text-left">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Learning Materials Library
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Upload PDFs, Tajweed cheat-sheets, and audio files for your students.
+          </p>
+        </div>
+        <button type="button" onclick="openUploadMaterialModal()" class="px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="upload" class="w-4 h-4"></i>
+          <span>Upload Material</span>
+        </button>
+      </div>
+
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 shadow-xl overflow-x-auto">
+        <table class="w-full text-left text-xs text-tealtext-200 border-collapse">
+          <thead>
+            <tr class="border-b border-white/15 text-white uppercase text-[11px] font-semibold">
+              <th class="py-3 px-4">Title</th>
+              <th class="py-3 px-4">Subject</th>
+              <th class="py-3 px-4">Batch</th>
+              <th class="py-3 px-4">Date</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="materialsTableBody" class="divide-y divide-white/10">
+            <!-- Rendered dynamically by teacher.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 8: MESSAGES -->
+    <section id="t-tab-messages" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Teacher Inbox & Messages
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Communications from school administration, students, and parents.
+        </p>
+      </div>
+
+      <div id="teacherMessagesContainer">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 9: NOTIFICATIONS -->
+    <section id="t-tab-notifications" class="t-tab-content hidden space-y-6 text-left">
+      <div class="space-y-1">
+        <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+          Notifications & System Alerts
+        </h2>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          System events and updates.
+        </p>
+      </div>
+
+      <div id="notificationsFullList" class="space-y-3">
+        <!-- Rendered dynamically by teacher.js -->
+      </div>
+    </section>
+
+    <!-- TAB 10: PROFILE -->
+    <section id="t-tab-profile" class="t-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        
+        <div class="flex items-center gap-4 border-b border-white/10 pb-6">
+          <div id="profTeacherAvatar" class="w-16 h-16 rounded-2xl bg-accent-lavender text-tealbg-950 font-display font-bold text-2xl flex items-center justify-center">
+            TC
+          </div>
+          <div>
+            <h3 id="profTeacherName" class="text-xl font-display font-semibold text-white"></h3>
+            <p id="profTeacherDept" class="text-xs text-accent-lime font-medium"></p>
+            <p id="profTeacherId" class="text-xs font-mono text-tealtext-300"></p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime">Personal & Contact Details</span>
+            <p><span class="text-tealtext-400">Contact / WhatsApp:</span> <span id="profTeacherPhone" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Location:</span> <span id="profTeacherLocation" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Faculty Status:</span> <span id="profTeacherStatus" class="font-bold text-accent-lime uppercase"></span></p>
+          </div>
+
+          <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime">Teaching Details</span>
+            <p><span class="text-tealtext-400">Subjects:</span> <span id="profTeacherSubjects" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Class Type:</span> <span id="profTeacherClassType" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Available Days:</span> <span id="profTeacherDays" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Teaching Start:</span> <span id="profTeacherStartDate" class="text-white font-medium"></span></p>
+          </div>
+
+          <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 sm:col-span-2 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime">Teaching Hours Breakdown</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div class="p-3 bg-tealbg-950/70 rounded-xl">
+                <span class="text-[10px] text-tealtext-400">Daily Duration</span>
+                <p id="profTeacherDailyDuration" class="text-sm font-bold text-white"></p>
+              </div>
+              <div class="p-3 bg-tealbg-950/70 rounded-xl">
+                <span class="text-[10px] text-tealtext-400">Weekly Hours</span>
+                <p id="profTeacherWeeklyHours" class="text-sm font-bold text-white"></p>
+              </div>
+              <div class="p-3 bg-tealbg-950/70 rounded-xl border border-accent-lime/40">
+                <span class="text-[10px] text-accent-lime font-bold">Monthly Estimate</span>
+                <p id="profTeacherMonthlyHours" class="text-sm font-bold text-accent-lime"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+  <!-- Host Class Modal -->
+  <div id="tHostClassModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 text-left">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
+        <div>
+          <h3 id="hostModalTitle" class="text-lg font-display font-semibold text-white">Live Classroom</h3>
+          <p id="hostModalSubject" class="text-xs text-tealtext-300"></p>
+        </div>
+        <button type="button" onclick="closeHostClassModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-xs text-tealtext-200">Starting the live session with interactive digital whiteboard and student video grid.</p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="closeHostClassModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 bg-white/10">Close</button>
+        <button type="button" onclick="alert('Launching Live Classroom...'); closeHostClassModal();" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow">Launch Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Assignment Modal -->
+  <div id="tCreateAssignmentModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4 text-left">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
+        <h3 class="text-lg font-display font-semibold text-white">Create Assignment</h3>
+        <button type="button" onclick="closeCreateAssignmentModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form onsubmit="event.preventDefault(); alert('Assignment created successfully!'); closeCreateAssignmentModal();" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-tealtext-100">Assignment Title</label>
+          <input type="text" placeholder="e.g. Surah Recitation Drill" required class="w-full p-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+        </div>
+        <div>
+          <label class="block font-medium text-tealtext-100">Instructions</label>
+          <textarea rows="2" placeholder="Instructions for students..." class="w-full p-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeCreateAssignmentModal()" class="px-4 py-2 rounded-full bg-white/10">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-full font-bold uppercase text-tealbg-950 bg-accent-lime">Publish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Upload Material Modal -->
+  <div id="tUploadMaterialModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4 text-left">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
+        <h3 class="text-lg font-display font-semibold text-white">Upload Learning Material</h3>
+        <button type="button" onclick="closeUploadMaterialModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form onsubmit="event.preventDefault(); alert('Material uploaded successfully!'); closeUploadMaterialModal();" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-tealtext-100">Material Title</label>
+          <input type="text" placeholder="e.g. Makharij Guide PDF" required class="w-full p-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+        </div>
+        <div>
+          <label class="block font-medium text-tealtext-100">File</label>
+          <input type="file" required class="w-full p-2 rounded-xl bg-tealbg-900 border border-white/20 text-tealtext-200" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeUploadMaterialModal()" class="px-4 py-2 rounded-full bg-white/10">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-full font-bold uppercase text-tealbg-950 bg-accent-lime">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-6 border-t border-white/15 text-xs text-tealtext-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="font-display font-semibold text-white text-sm tracking-tight flex items-center gap-2">
+        <img src="assets/logo.png" alt="Zawiyah Logo" class="h-6 w-auto object-contain" />
+        <span>Zawiyah</span>
+      </a>
+      <span class="text-white/30">•</span>
+      <span>Faculty Portal</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="hover:text-white transition-colors">Public Website</a>
+      <a href="student-portal.html" class="hover:text-white transition-colors">Student Portal</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="teacher.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

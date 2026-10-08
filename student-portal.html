@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Portal | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Access your Zawiyah Online Islamic School student dashboard, live classes, course materials, assignments, and mentor feedback." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Portal specific subtle styles */
+    .tab-btn.active {
+      background-color: rgba(255, 255, 255, 0.95);
+      color: #083239;
+      box-shadow: 0 4px 14px 0 rgba(5, 34, 39, 0.18);
+    }
+    .tab-btn:not(.active) {
+      color: #DCEDF2;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+    .tab-btn:not(.active):hover {
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
+    }
+    .dash-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dash-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px -10px rgba(5, 34, 39, 0.3);
+    }
+    .progress-bar-fill {
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="bg-tealbg text-white font-sans antialiased selection:bg-white selection:text-tealbg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Ambient Glow & Interactive Canvas Dots -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    <canvas id="dotsCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+  </div>
+
+  <!-- PORTAL TOP NAVIGATION -->
+  <header class="relative z-50 w-full pt-5 pb-4 px-4 sm:px-8 md:px-12 max-w-7xl mx-auto flex items-center justify-between transition-all duration-300 border-b border-white/10">
+    <!-- Brand Logo -->
+    <a href="index.html" class="group flex items-center gap-2.5 text-white font-display font-semibold text-xl tracking-tight py-1">
+      <img src="assets/logo.png?v=6" alt="Zawiyah Online Islamic School" class="w-[130px] sm:w-[140px] md:w-[155px] h-auto object-contain select-none" />
+      <span class="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-accent-lime/20 text-accent-lime border border-accent-lime/30 uppercase tracking-wider ml-1">Portal</span>
+    </a>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Public Website Link -->
+      <a href="index.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-200 hover:text-white bg-white/5 hover:bg-white/15 border border-white/15 rounded-full transition-all duration-200">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Main Website</span>
+      </a>
+
+      <!-- Logged In Controls (Shown only when logged in) -->
+      <div id="navUserArea" class="hidden items-center gap-3">
+        <!-- Notification Button -->
+        <button id="navNotifyBtn" class="relative p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent-lime"></span>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/15 border border-white/20">
+          <div class="w-6 h-6 rounded-full bg-accent-lime text-tealbg-950 font-bold text-xs flex items-center justify-center font-display" id="navStudentInitials">
+            Z
+          </div>
+          <span class="text-xs font-medium text-white hidden sm:inline" id="navStudentName">Student</span>
+        </div>
+
+        <!-- Logout Button -->
+        <button id="logoutBtn" title="Logout" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-tealbg bg-white hover:bg-tealtext-100 rounded-full transition-all shadow-sm">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 1. STUDENT LOGIN & ADMISSION SCREEN       -->
+  <!-- ========================================== -->
+  <main id="portalLoginView" class="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-10">
+    <div class="w-full max-w-md bg-tealbg-800/90 backdrop-blur-xl border border-white/20 rounded-3xl p-7 sm:p-9 shadow-2xl space-y-6">
+      
+      <!-- Login Card Header -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 border border-white/20 text-accent-lime shadow-inner mb-1">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-display font-semibold text-white tracking-tight" id="authTitle">
+          Student Portal
+        </h1>
+        <p class="text-xs sm:text-sm text-tealtext-200" id="authSubtitle">
+          Continue your Zawiyah learning journey.
+        </p>
+      </div>
+
+      <!-- Mode Switch Buttons -->
+      <div class="grid grid-cols-2 p-1 rounded-2xl bg-tealbg-950/60 border border-white/10 text-xs font-semibold">
+        <button type="button" id="tabLoginBtn" class="py-2 rounded-xl transition-all bg-white text-tealbg-950 shadow-md">
+          Portal Login
+        </button>
+        <button type="button" id="tabRegisterBtn" class="py-2 rounded-xl transition-all text-tealtext-200 hover:text-white">
+          Apply Admission
+        </button>
+      </div>
+
+      <!-- Feedback Alert Box -->
+      <div id="studentAuthAlert" class="hidden p-3.5 rounded-2xl text-xs text-left"></div>
+
+      <!-- Login Form -->
+      <form id="portalLoginForm" class="space-y-4" novalidate autocomplete="off">
+        
+        <!-- Name / Username Field -->
+        <div class="space-y-1.5 text-left">
+          <label for="studentIdentifier" class="block text-xs font-medium text-tealtext-100">
+            Name / Username
+          </label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              id="studentIdentifier" 
+              name="studentIdentifier"
+              placeholder="Enter your Name" 
+              required
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime focus:ring-1 focus:ring-accent-lime transition-all"
+            />
+          </div>
+          <p id="identifierError" class="hidden text-[11px] text-accent-lavender">Please enter your Name / Username.</p>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5 text-left">
+          <div class="flex items-center justify-between">
+            <label for="studentPassword" class="block text-xs font-medium text-tealtext-100">
+              Password
+            </label>
+            <button type="button" id="forgotPassBtn" class="text-[11px] text-accent-lime hover:underline cursor-pointer">
+              Forgot Password?
+            </button>
+          </div>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="password" 
+              id="studentPassword" 
+              name="studentPassword"
+              placeholder="Enter your password" 
+              required
+              class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime focus:ring-1 focus:ring-accent-lime transition-all"
+            />
+            <button type="button" id="togglePasswordBtn" aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400 hover:text-white">
+              <i data-lucide="eye" id="toggleEyeIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="passwordError" class="hidden text-[11px] text-accent-lavender">Please enter your password.</p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center gap-2 text-left">
+          <input type="checkbox" id="rememberMe" checked class="w-4 h-4 rounded text-tealbg-600 focus:ring-accent-lime accent-lime cursor-pointer" />
+          <label for="rememberMe" class="text-xs text-tealtext-200 cursor-pointer select-none">Remember my login</label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button 
+            type="submit" 
+            id="loginSubmitBtn"
+            class="w-full py-3 px-6 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg bg-white hover:bg-tealtext-100 transition-all shadow-md hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2"
+          >
+            <span>Login to Portal</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <div class="pt-1 text-center">
+          <button type="button" onclick="document.getElementById('tabRegisterBtn').click()" class="text-xs text-tealtext-300 hover:text-white">
+            Don't have an account? <span class="text-accent-lime font-semibold underline">Create Student Account</span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Student Admission Registration Form (Hidden by default) -->
+      <form id="studentRegisterForm" class="hidden space-y-4 text-left" novalidate autocomplete="off">
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">Student Full Name <span class="text-accent-lime">*</span></label>
+          <input type="text" id="regStudentFullName" placeholder="e.g. Aahil Mohammed" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Contact / WhatsApp Number <span class="text-accent-lime">*</span></label>
+            <input type="text" id="regStudentContact" placeholder="e.g. +91 98460 00000" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Student Age</label>
+            <input type="number" id="regStudentAgeNum" placeholder="e.g. 7" min="4" max="25" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">Class / Course <span class="text-accent-lime">*</span></label>
+          <select id="regStudentCourseSelect" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white text-sm focus:outline-none focus:border-accent-lime transition-all">
+            <option value="Quran & Tajweed">Quran & Tajweed (Recitation & Makharij)</option>
+            <option value="Hifz Program">Hifz Program (Quran Memorization)</option>
+            <option value="Islamic Studies">Islamic Studies (Aqeedah, Seerah, Adab)</option>
+            <option value="Arabic Language">Arabic Language (Speaking & Grammar)</option>
+            <option value="Hadith & Sunnah">Hadith & Sunnah Studies</option>
+            <option value="Islamic Jurisprudence (Fiqh)">Islamic Jurisprudence (Fiqh)</option>
+          </select>
+        </div>
+
+        <!-- Class Days Selection -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-tealtext-100">Class Days <span class="text-accent-lime">*</span></label>
+          <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5 text-center text-xs">
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Mon" checked class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Mon</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Tue" checked class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Tue</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Wed" checked class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Wed</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Thu" checked class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Thu</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Fri" checked class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Fri</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Sat" class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Sat</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-tealbg-900/80 border border-white/10 hover:border-accent-lime cursor-pointer select-none">
+              <input type="checkbox" name="regClassDays" value="Sun" class="w-3.5 h-3.5 accent-lime mb-1" />
+              <span class="text-[11px] text-tealtext-100">Sun</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Daily Class Duration <span class="text-accent-lime">*</span></label>
+            <select id="regStudentDurationSelect" class="w-full px-3 py-2 rounded-xl bg-tealbg-900/80 border border-white/20 text-white text-xs focus:outline-none focus:border-accent-lime transition-all">
+              <option value="30 Minutes">30 Minutes</option>
+              <option value="45 Minutes">45 Minutes</option>
+              <option value="60 Minutes" selected>60 Minutes (1.0 hr)</option>
+              <option value="90 Minutes">90 Minutes (1.5 hrs)</option>
+              <option value="120 Minutes">120 Minutes (2.0 hrs)</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Class Type <span class="text-accent-lime">*</span></label>
+            <select id="regStudentClassTypeSelect" class="w-full px-3 py-2 rounded-xl bg-tealbg-900/80 border border-white/20 text-white text-xs focus:outline-none focus:border-accent-lime transition-all">
+              <option value="Group Class">Group Class</option>
+              <option value="One-to-One">One-to-One Class</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">Place / Country</label>
+          <input type="text" id="regStudentPlaceText" placeholder="e.g. Dubai, UAE / Kerala, India" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Create Password <span class="text-accent-lime">*</span></label>
+            <input type="password" id="regStudentPass" placeholder="Min 6 characters" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-tealtext-100">Confirm Password <span class="text-accent-lime">*</span></label>
+            <input type="password" id="regStudentConfirmPass" placeholder="Repeat password" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" />
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" id="studentRegSubmitBtn" class="w-full py-3 px-6 rounded-full text-xs font-bold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+            <span>Create Student Account</span>
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <div class="pt-1 text-center">
+          <button type="button" onclick="document.getElementById('tabLoginBtn').click()" class="text-xs text-tealtext-300 hover:text-white">
+            Already registered? <span class="text-accent-lime font-semibold underline">Login to Portal</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Help / Support Footer -->
+      <div class="pt-4 border-t border-white/10 text-center text-xs text-tealtext-300">
+        <span>Need help accessing your classes?</span>
+        <a href="https://wa.me/916282552309?text=Assalamu%20Alaikum%20Zawiyah%2C%20I%20need%20help%20with%20my%20Student%20Portal%20access." target="_blank" class="text-accent-lime hover:underline ml-1 font-medium">Contact Support</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 2. STUDENT DASHBOARD (Shown After Login)   -->
+  <!-- ========================================== -->
+  <main id="portalDashboardView" class="hidden relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 py-8">
+    <div class="space-y-8">
+      
+      <!-- Top Dashboard Greeting & Profile Banner -->
+      <div class="bg-gradient-to-r from-tealbg-800/90 to-tealbg-700/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+        
+        <!-- Left: Student Info -->
+        <div class="flex items-center gap-4 sm:gap-5">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white/10 border-2 border-accent-lime p-1 shadow-md flex-shrink-0 flex items-center justify-center">
+            <div id="dashStudentInitials" class="w-full h-full rounded-2xl bg-tealbg-900 flex items-center justify-center text-accent-lime font-display font-bold text-2xl">
+              ZS
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-accent-lime/20 border border-accent-lime/30 text-[10px] font-semibold text-accent-lime uppercase tracking-wider">
+              <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+              <span>Active Student</span>
+            </div>
+            <h1 id="dashStudentGreeting" class="text-2xl sm:text-3xl font-display font-semibold text-white tracking-tight">
+              Welcome, Student!
+            </h1>
+            <p id="dashStudentMeta" class="text-xs sm:text-sm text-tealtext-200">
+              Student ID: <span id="dashStudentId" class="font-mono text-white font-medium">ZAW-STU-001</span> • <span id="dashStudentTrack">Online Islamic Studies</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Primary Mentor Badge & Next Class Quick CTA -->
+        <div class="flex flex-wrap items-center gap-3 bg-tealbg-900/70 border border-white/15 p-4 rounded-2xl">
+          <div class="space-y-0.5 text-left pr-2">
+            <span class="text-[10px] text-tealtext-300 uppercase tracking-wider font-semibold">Next Upcoming Class</span>
+            <p class="text-xs font-semibold text-white">Quran & Tajweed (Live)</p>
+            <p class="text-[11px] text-accent-lime">Today at 04:30 PM</p>
+          </div>
+          <button type="button" onclick="launchClassModal('Quran & Tajweed', 'Ustadha Fatima Zahra', '04:30 PM')" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white rounded-full transition-all shadow-md flex items-center gap-1.5">
+            <i data-lucide="video" class="w-3.5 h-3.5"></i>
+            <span>Join Class</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Navigation Tabs (Child-Friendly & Clean) -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <button type="button" class="tab-btn active px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="overview">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="classes">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>My Classes</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="schedule">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>Class Schedule</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="attendance">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Attendance</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="progress">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>
+          <span>My Progress</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="materials">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          <span>Learning Materials</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="assignments">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Assignments</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="mentor">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Mentor</span>
+        </button>
+        <button type="button" class="tab-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="notifications">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span>Notifications</span>
+        </button>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 1: OVERVIEW                            -->
+      <!-- ========================================== -->
+      <section id="tab-overview" class="tab-content space-y-6">
+        <!-- 4 Stat Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          
+          <!-- Stat 1: Attendance -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-medium text-tealbg-700">Attendance</span>
+              <p class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">94.3%</p>
+              <span class="text-[11px] text-tealbg-600">33 of 35 Classes Present</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+              <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <!-- Stat 2: Active Courses -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-medium text-tealbg-700">Enrolled Courses</span>
+              <p class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">4</p>
+              <span class="text-[11px] text-tealbg-600">All Tracks Active</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-accent-lavender/25 text-tealbg-950 flex items-center justify-center">
+              <i data-lucide="book-open" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <!-- Stat 3: Assignments -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-medium text-tealbg-700">Pending Tasks</span>
+              <p class="text-2xl sm:text-3xl font-display font-bold text-tealbg-950">2</p>
+              <span class="text-[11px] text-tealbg-600">1 Due Tomorrow</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+              <i data-lucide="file-text" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <!-- Stat 4: Mentor Guidance -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-medium text-tealbg-700">Lead Mentor</span>
+              <p class="text-lg font-display font-bold text-tealbg-950">Ustadha Fatima</p>
+              <span class="text-[11px] text-accent-lime bg-tealbg-900 px-2 py-0.5 rounded-full inline-block font-semibold mt-0.5">Online Now</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+              <i data-lucide="user-check" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 2 Column Section: Today's Schedule & Quick Progress Snapshot -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Today's Schedule -->
+          <div class="lg:col-span-7 bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4 text-left">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <h2 class="text-lg font-display font-semibold text-white flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-accent-lime"></i>
+                <span>Today's Learning Schedule</span>
+              </h2>
+              <button type="button" onclick="switchTab('schedule')" class="text-xs text-accent-lime hover:underline font-medium">
+                View Full Week →
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Item 1 -->
+              <div class="bg-white/10 border border-white/15 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-accent-lime bg-tealbg-900 px-2.5 py-0.5 rounded-full">04:30 PM – 05:30 PM</span>
+                    <span class="text-xs text-tealtext-200 font-medium">60 Mins</span>
+                  </div>
+                  <h3 class="text-sm font-semibold text-white">Quran & Tajweed — Surah Al-Mulk Recitation</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Ustadha Fatima Zahra</p>
+                </div>
+                <button type="button" onclick="launchClassModal('Quran & Tajweed', 'Ustadha Fatima Zahra', '04:30 PM')" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white rounded-full transition-all shadow-md flex items-center justify-center gap-1.5 self-start sm:self-center">
+                  <i data-lucide="video" class="w-3.5 h-3.5"></i>
+                  <span>Join Live</span>
+                </button>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-tealtext-300 bg-white/10 px-2.5 py-0.5 rounded-full">Tomorrow • 05:00 PM</span>
+                    <span class="text-xs text-tealtext-300 font-medium">60 Mins</span>
+                  </div>
+                  <h3 class="text-sm font-semibold text-white">Arabic Foundation — Sun & Moon Letters</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Ustadha Maryam Al-Hashemi</p>
+                </div>
+                <span class="text-xs text-tealtext-300 px-3 py-1 rounded-full bg-white/10 w-fit self-start sm:self-center">Scheduled</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Progress Snapshot -->
+          <div class="lg:col-span-5 bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4 text-left">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <h2 class="text-lg font-display font-semibold text-white flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-accent-lavender"></i>
+                <span>Overall Progress</span>
+              </h2>
+              <button type="button" onclick="switchTab('progress')" class="text-xs text-accent-lime hover:underline font-medium">
+                Detailed Stats →
+              </button>
+            </div>
+
+            <div class="space-y-3.5">
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-white">Quran Reading & Tajweed</span>
+                  <span class="text-accent-lime font-bold">82%</span>
+                </div>
+                <div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-accent-lime h-2 rounded-full progress-bar-fill" style="width: 82%"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-white">Islamic Studies</span>
+                  <span class="text-accent-lavender font-bold">90%</span>
+                </div>
+                <div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-accent-lavender h-2 rounded-full progress-bar-fill" style="width: 90%"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-white">Arabic Foundation</span>
+                  <span class="text-accent-lime font-bold">75%</span>
+                </div>
+                <div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-accent-lime h-2 rounded-full progress-bar-fill" style="width: 75%"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-white">Character & Akhlaaq</span>
+                  <span class="text-accent-lavender font-bold">88%</span>
+                </div>
+                <div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-accent-lavender h-2 rounded-full progress-bar-fill" style="width: 88%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: MY CLASSES                          -->
+      <!-- ========================================== -->
+      <section id="tab-classes" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Enrolled Courses
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Select a course to review curriculum, mentor notes, and continue learning.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Course 1: Quran & Tajweed -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 sm:p-8 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-5 text-left">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-tealbg/10 text-tealbg text-xs font-bold uppercase tracking-wider">Level 2</span>
+                <span class="text-xs font-semibold text-tealbg-700">5 Sessions / Week</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-display font-semibold text-tealbg-950">Quran & Tajweed</h3>
+                <p class="text-xs text-tealbg-800 font-medium">Mentor: Ustadha Fatima Zahra</p>
+              </div>
+              <p class="text-xs text-tealbg-900/75 leading-relaxed font-normal">
+                Mastering Makharij, rules of Noon Sakinah, and fluent recitation with proper Tajweed principles.
+              </p>
+              
+              <!-- Progress Bar -->
+              <div class="space-y-1.5 pt-2 border-t border-tealbg/10">
+                <div class="flex justify-between text-xs font-semibold text-tealbg-900">
+                  <span>Course Progress</span>
+                  <span class="text-tealbg">82%</span>
+                </div>
+                <div class="w-full bg-tealbg/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-tealbg h-2 rounded-full" style="width: 82%"></div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openCourseDetails('Quran & Tajweed', 'Ustadha Fatima Zahra', '82%')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <span>Continue Learning</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Course 2: Islamic Studies -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 sm:p-8 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-5 text-left">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-accent-lavender/25 text-tealbg-950 text-xs font-bold uppercase tracking-wider">Foundation</span>
+                <span class="text-xs font-semibold text-tealbg-700">Seerah & Aqeedah</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-display font-semibold text-tealbg-950">Islamic Studies</h3>
+                <p class="text-xs text-tealbg-800 font-medium">Mentor: Sheikh Omar Farooq</p>
+              </div>
+              <p class="text-xs text-tealbg-900/75 leading-relaxed font-normal">
+                Inspiring stories of the Prophets ﷺ, Pillars of Islam, essential Duas, and understanding living values.
+              </p>
+              
+              <!-- Progress Bar -->
+              <div class="space-y-1.5 pt-2 border-t border-tealbg/10">
+                <div class="flex justify-between text-xs font-semibold text-tealbg-900">
+                  <span>Course Progress</span>
+                  <span class="text-tealbg">90%</span>
+                </div>
+                <div class="w-full bg-tealbg/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-tealbg h-2 rounded-full" style="width: 90%"></div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openCourseDetails('Islamic Studies', 'Sheikh Omar Farooq', '90%')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <span>Continue Learning</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Course 3: Arabic Foundation -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 sm:p-8 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-5 text-left">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-tealbg/10 text-tealbg text-xs font-bold uppercase tracking-wider">Elementary</span>
+                <span class="text-xs font-semibold text-tealbg-700">Vocabulary & Grammar</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-display font-semibold text-tealbg-950">Arabic Foundation</h3>
+                <p class="text-xs text-tealbg-800 font-medium">Mentor: Ustadha Maryam Al-Hashemi</p>
+              </div>
+              <p class="text-xs text-tealbg-900/75 leading-relaxed font-normal">
+                Learning Arabic alphabet combinations, basic conversation sentences, and essential Quranic vocabulary.
+              </p>
+              
+              <!-- Progress Bar -->
+              <div class="space-y-1.5 pt-2 border-t border-tealbg/10">
+                <div class="flex justify-between text-xs font-semibold text-tealbg-900">
+                  <span>Course Progress</span>
+                  <span class="text-tealbg">75%</span>
+                </div>
+                <div class="w-full bg-tealbg/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-tealbg h-2 rounded-full" style="width: 75%"></div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openCourseDetails('Arabic Foundation', 'Ustadha Maryam Al-Hashemi', '75%')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <span>Continue Learning</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Course 4: Character Development -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 sm:p-8 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-5 text-left">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-accent-lavender/25 text-tealbg-950 text-xs font-bold uppercase tracking-wider">Akhlaaq</span>
+                <span class="text-xs font-semibold text-tealbg-700">Practical Values</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-display font-semibold text-tealbg-950">Character Development</h3>
+                <p class="text-xs text-tealbg-800 font-medium">Mentor: Sheikh Bilal Nadwi</p>
+              </div>
+              <p class="text-xs text-tealbg-900/75 leading-relaxed font-normal">
+                Practicing honesty, kindness, respect for parents and teachers, and living Islamic manners with peers.
+              </p>
+              
+              <!-- Progress Bar -->
+              <div class="space-y-1.5 pt-2 border-t border-tealbg/10">
+                <div class="flex justify-between text-xs font-semibold text-tealbg-900">
+                  <span>Course Progress</span>
+                  <span class="text-tealbg">88%</span>
+                </div>
+                <div class="w-full bg-tealbg/15 rounded-full h-2 overflow-hidden">
+                  <div class="bg-tealbg h-2 rounded-full" style="width: 88%"></div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openCourseDetails('Character Development', 'Sheikh Bilal Nadwi', '88%')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <span>Continue Learning</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: CLASS SCHEDULE                      -->
+      <!-- ========================================== -->
+      <section id="tab-schedule" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Weekly Class Schedule
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            View your upcoming live classes and join sessions directly with your mentors.
+          </p>
+        </div>
+
+        <div class="bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 text-left">
+          
+          <div class="space-y-3">
+            <!-- Schedule 1 (Live/Upcoming) -->
+            <div class="bg-white/15 border-2 border-accent-lime/60 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-accent-lime text-tealbg-950 font-bold flex flex-col items-center justify-center flex-shrink-0">
+                  <span class="text-[10px] uppercase tracking-wider">MON</span>
+                  <span class="text-sm">TODAY</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-accent-lime uppercase tracking-wider bg-tealbg-900 px-2.5 py-0.5 rounded-full">04:30 PM – 05:30 PM</span>
+                    <span class="text-xs text-white bg-accent-lime/20 border border-accent-lime/40 px-2 py-0.5 rounded-full font-semibold">Starting in 15 mins</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-white">Quran & Tajweed (Recitation Practice)</h3>
+                  <p class="text-xs text-tealtext-200">Mentor: Ustadha Fatima Zahra • Small Batch Group</p>
+                </div>
+              </div>
+              <button type="button" onclick="launchClassModal('Quran & Tajweed', 'Ustadha Fatima Zahra', '04:30 PM')" class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white rounded-full transition-all shadow-md flex items-center justify-center gap-2 flex-shrink-0">
+                <i data-lucide="video" class="w-4 h-4"></i>
+                <span>Join Class</span>
+              </button>
+            </div>
+
+            <!-- Schedule 2 -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/10 text-white font-bold flex flex-col items-center justify-center flex-shrink-0">
+                  <span class="text-[10px] uppercase tracking-wider">TUE</span>
+                  <span class="text-sm">06</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-tealtext-300 uppercase tracking-wider bg-white/10 px-2.5 py-0.5 rounded-full">05:00 PM – 06:00 PM</span>
+                    <span class="text-xs text-tealtext-300 font-medium">Scheduled</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-white">Arabic Foundation — Sentence Building</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Ustadha Maryam Al-Hashemi</p>
+                </div>
+              </div>
+              <button type="button" disabled class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-tealtext-400 bg-white/10 rounded-full cursor-not-allowed flex items-center justify-center gap-2 flex-shrink-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>Upcoming</span>
+              </button>
+            </div>
+
+            <!-- Schedule 3 -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/10 text-white font-bold flex flex-col items-center justify-center flex-shrink-0">
+                  <span class="text-[10px] uppercase tracking-wider">WED</span>
+                  <span class="text-sm">07</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-tealtext-300 uppercase tracking-wider bg-white/10 px-2.5 py-0.5 rounded-full">04:30 PM – 05:30 PM</span>
+                    <span class="text-xs text-tealtext-300 font-medium">Scheduled</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-white">Quran & Tajweed — Rules of Ikhfa & Idgham</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Ustadha Fatima Zahra</p>
+                </div>
+              </div>
+              <button type="button" disabled class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-tealtext-400 bg-white/10 rounded-full cursor-not-allowed flex items-center justify-center gap-2 flex-shrink-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>Upcoming</span>
+              </button>
+            </div>
+
+            <!-- Schedule 4 -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/10 text-white font-bold flex flex-col items-center justify-center flex-shrink-0">
+                  <span class="text-[10px] uppercase tracking-wider">THU</span>
+                  <span class="text-sm">08</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-tealtext-300 uppercase tracking-wider bg-white/10 px-2.5 py-0.5 rounded-full">05:00 PM – 06:00 PM</span>
+                    <span class="text-xs text-tealtext-300 font-medium">Scheduled</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-white">Islamic Studies — Stories of the Prophets</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Sheikh Omar Farooq</p>
+                </div>
+              </div>
+              <button type="button" disabled class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-tealtext-400 bg-white/10 rounded-full cursor-not-allowed flex items-center justify-center gap-2 flex-shrink-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>Upcoming</span>
+              </button>
+            </div>
+
+            <!-- Schedule 5 -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/10 text-white font-bold flex flex-col items-center justify-center flex-shrink-0">
+                  <span class="text-[10px] uppercase tracking-wider">SAT</span>
+                  <span class="text-sm">10</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-tealtext-300 uppercase tracking-wider bg-white/10 px-2.5 py-0.5 rounded-full">10:00 AM – 11:00 AM</span>
+                    <span class="text-xs text-tealtext-300 font-medium">Scheduled</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-white">Character Development & Daily Sunnah</h3>
+                  <p class="text-xs text-tealtext-300">Mentor: Sheikh Bilal Nadwi</p>
+                </div>
+              </div>
+              <button type="button" disabled class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-tealtext-400 bg-white/10 rounded-full cursor-not-allowed flex items-center justify-center gap-2 flex-shrink-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>Upcoming</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: ATTENDANCE                          -->
+      <!-- ========================================== -->
+      <section id="tab-attendance" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Attendance Record
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Track your class presence and participation history.
+          </p>
+        </div>
+
+        <!-- Attendance Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 space-y-1 text-left">
+            <span class="text-xs font-medium text-tealbg-700">Total Classes Held</span>
+            <p class="text-3xl font-display font-bold text-tealbg-950">35</p>
+            <span class="text-[11px] text-tealbg-600">Since Term Start</span>
+          </div>
+
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 space-y-1 text-left">
+            <span class="text-xs font-medium text-tealbg-700">Present</span>
+            <p class="text-3xl font-display font-bold text-tealbg">33</p>
+            <span class="text-[11px] text-tealbg-600">Attended on time</span>
+          </div>
+
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 space-y-1 text-left">
+            <span class="text-xs font-medium text-tealbg-700">Absent</span>
+            <p class="text-3xl font-display font-bold text-accent-lavender">2</p>
+            <span class="text-[11px] text-tealbg-600">With prior parent notice</span>
+          </div>
+
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 space-y-1 text-left">
+            <span class="text-xs font-medium text-tealbg-700">Attendance Rate</span>
+            <p class="text-3xl font-display font-bold text-accent-lime bg-tealbg-900 px-3 py-0.5 rounded-2xl w-fit">94.3%</p>
+            <span class="text-[11px] text-tealbg-600">Excellent Consistency ⭐</span>
+          </div>
+        </div>
+
+        <!-- Visual Attendance Indicator & Recent Log -->
+        <div class="bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 text-left">
+          <div class="space-y-2">
+            <h3 class="text-base font-semibold text-white">Recent Attendance Log</h3>
+            <div class="w-full bg-white/10 rounded-full h-3 overflow-hidden flex">
+              <div class="bg-accent-lime h-full" style="width: 94.3%"></div>
+              <div class="bg-accent-lavender h-full" style="width: 5.7%"></div>
+            </div>
+            <div class="flex items-center justify-between text-xs text-tealtext-300">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-accent-lime"></span> Present (94.3%)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-accent-lavender"></span> Absent (5.7%)</span>
+            </div>
+          </div>
+
+          <!-- History Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-tealtext-200">
+              <thead class="text-[11px] uppercase tracking-wider text-tealtext-300 border-b border-white/15 pb-2">
+                <tr>
+                  <th class="py-2.5 px-3">Date</th>
+                  <th class="py-2.5 px-3">Subject</th>
+                  <th class="py-2.5 px-3">Mentor</th>
+                  <th class="py-2.5 px-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10 font-normal">
+                <tr>
+                  <td class="py-3 px-3 font-mono text-white">Oct 04, 2026</td>
+                  <td class="py-3 px-3 text-white font-medium">Quran & Tajweed</td>
+                  <td class="py-3 px-3">Ustadha Fatima Zahra</td>
+                  <td class="py-3 px-3 text-right"><span class="px-2.5 py-1 rounded-full bg-accent-lime/20 text-accent-lime font-semibold text-[10px]">PRESENT</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-mono text-white">Oct 03, 2026</td>
+                  <td class="py-3 px-3 text-white font-medium">Islamic Studies</td>
+                  <td class="py-3 px-3">Sheikh Omar Farooq</td>
+                  <td class="py-3 px-3 text-right"><span class="px-2.5 py-1 rounded-full bg-accent-lime/20 text-accent-lime font-semibold text-[10px]">PRESENT</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-mono text-white">Oct 02, 2026</td>
+                  <td class="py-3 px-3 text-white font-medium">Arabic Foundation</td>
+                  <td class="py-3 px-3">Ustadha Maryam</td>
+                  <td class="py-3 px-3 text-right"><span class="px-2.5 py-1 rounded-full bg-accent-lime/20 text-accent-lime font-semibold text-[10px]">PRESENT</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-mono text-white">Oct 01, 2026</td>
+                  <td class="py-3 px-3 text-white font-medium">Quran & Tajweed</td>
+                  <td class="py-3 px-3">Ustadha Fatima Zahra</td>
+                  <td class="py-3 px-3 text-right"><span class="px-2.5 py-1 rounded-full bg-accent-lime/20 text-accent-lime font-semibold text-[10px]">PRESENT</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-mono text-white">Sep 30, 2026</td>
+                  <td class="py-3 px-3 text-white font-medium">Character Development</td>
+                  <td class="py-3 px-3">Sheikh Bilal</td>
+                  <td class="py-3 px-3 text-right"><span class="px-2.5 py-1 rounded-full bg-accent-lavender/25 text-white font-semibold text-[10px]">EXCUSED</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: MY PROGRESS                         -->
+      <!-- ========================================== -->
+      <section id="tab-progress" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Learning Progress & Milestones
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            A comprehensive breakdown of all your skills, memorization, and understanding.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- 1. Quran Reading -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="book" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Quran Reading</h3>
+                  <span class="text-[11px] text-tealbg-700">Currently in Juz 4</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-tealbg bg-tealbg/10 px-2.5 py-1 rounded-full">85%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 85%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Fluency in continuous recitation has significantly improved. Good control over stop signs (Waqf).
+            </p>
+          </div>
+
+          <!-- 2. Tajweed -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Tajweed Rules</h3>
+                  <span class="text-[11px] text-tealbg-700">Makharij & Ghunnah</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-tealbg bg-tealbg/10 px-2.5 py-1 rounded-full">78%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 78%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Rules of Noon Sakinah & Tanween mastered. Practicing heavy letters (Tafkheem) and Qalqalah.
+            </p>
+          </div>
+
+          <!-- 3. Islamic Studies -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Islamic Studies</h3>
+                  <span class="text-[11px] text-tealbg-700">Seerah & Pillars of Iman</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-tealbg bg-tealbg/10 px-2.5 py-1 rounded-full">90%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 90%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Completed historical stories of Prophet Ibrahim AS, Prophet Yusuf AS, and the early Seerah in Makkah.
+            </p>
+          </div>
+
+          <!-- 4. Arabic -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="languages" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Arabic Foundation</h3>
+                  <span class="text-[11px] text-tealbg-700">Vocabulary & Writing</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-tealbg bg-tealbg/10 px-2.5 py-1 rounded-full">70%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 70%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Strong letter recognition. Developing confidence in writing full words and understanding simple questions.
+            </p>
+          </div>
+
+          <!-- 5. Duas & Salah -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="sun" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Duas & Salah</h3>
+                  <span class="text-[11px] text-tealbg-700">Daily Adhkar & Salah Recitation</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-accent-lime bg-tealbg-900 px-2.5 py-1 rounded-full">95%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 95%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Salah actions, Tashahhud, Durood, and morning/evening Duas memorized with correct meanings.
+            </p>
+          </div>
+
+          <!-- 6. Character Development -->
+          <div class="bg-white/95 text-tealbg-950 p-6 sm:p-7 rounded-3xl shadow-lg border border-white/40 space-y-4 text-left">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-tealbg/10 text-tealbg flex items-center justify-center">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-semibold text-base text-tealbg-950">Character Development</h3>
+                  <span class="text-[11px] text-tealbg-700">Honesty, Gratitude & Kindness</span>
+                </div>
+              </div>
+              <span class="text-sm font-bold text-tealbg bg-tealbg/10 px-2.5 py-1 rounded-full">88%</span>
+            </div>
+            <div class="w-full bg-tealbg/15 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-tealbg h-2.5 rounded-full" style="width: 88%"></div>
+            </div>
+            <p class="text-xs text-tealbg-900/75">
+              Active in class participation, courteous with classmates, and consistently reflects Islamic values.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: LEARNING MATERIALS                  -->
+      <!-- ========================================== -->
+      <section id="tab-materials" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Learning Materials & Resources
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Access curated PDF notes, video guides, worksheets, and review material provided by your mentors.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Material 1 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-4 text-left">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-md bg-tealbg/10 text-tealbg text-[10px] font-bold uppercase">PDF Notes</span>
+                <span class="text-[11px] text-tealbg-600">Oct 03, 2026</span>
+              </div>
+              <h3 class="font-display font-semibold text-base text-tealbg-950 leading-snug">
+                Tajweed Rules: Rules of Noon Sakinah & Tanween
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Quran & Tajweed</p>
+            </div>
+            <button type="button" onclick="openMaterialModal('Tajweed Rules: Rules of Noon Sakinah', 'PDF Notes', 'Quran & Tajweed')" class="w-full py-2 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider text-tealbg bg-tealbg/10 hover:bg-tealbg hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="file" class="w-3.5 h-3.5"></i>
+              <span>Open Notes</span>
+            </button>
+          </div>
+
+          <!-- Material 2 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-4 text-left">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-md bg-accent-lavender/30 text-tealbg-950 text-[10px] font-bold uppercase">Worksheet</span>
+                <span class="text-[11px] text-tealbg-600">Oct 01, 2026</span>
+              </div>
+              <h3 class="font-display font-semibold text-base text-tealbg-950 leading-snug">
+                Arabic Letter Joins & Writing Practice Sheet
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Arabic Foundation</p>
+            </div>
+            <button type="button" onclick="openMaterialModal('Arabic Letter Joins Practice Sheet', 'Worksheet', 'Arabic Foundation')" class="w-full py-2 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider text-tealbg bg-tealbg/10 hover:bg-tealbg hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              <span>Open Worksheet</span>
+            </button>
+          </div>
+
+          <!-- Material 3 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-4 text-left">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-md bg-tealbg/10 text-tealbg text-[10px] font-bold uppercase">Video Guide</span>
+                <span class="text-[11px] text-tealbg-600">Sep 28, 2026</span>
+              </div>
+              <h3 class="font-display font-semibold text-base text-tealbg-950 leading-snug">
+                Makharij Pronunciation Masterclass (Interactive)
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Quran & Tajweed</p>
+            </div>
+            <button type="button" onclick="openMaterialModal('Makharij Pronunciation Masterclass', 'Video Guide', 'Quran & Tajweed')" class="w-full py-2 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider text-tealbg bg-tealbg/10 hover:bg-tealbg hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+              <span>Watch Video</span>
+            </button>
+          </div>
+
+          <!-- Material 4 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-4 text-left">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-md bg-tealbg/10 text-tealbg text-[10px] font-bold uppercase">Study Material</span>
+                <span class="text-[11px] text-tealbg-600">Sep 25, 2026</span>
+              </div>
+              <h3 class="font-display font-semibold text-base text-tealbg-950 leading-snug">
+                Essential Daily Adhkar & Salah Guide for Kids
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Duas & Salah</p>
+            </div>
+            <button type="button" onclick="openMaterialModal('Essential Daily Adhkar & Salah Guide', 'Study Material', 'Duas & Salah')" class="w-full py-2 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider text-tealbg bg-tealbg/10 hover:bg-tealbg hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+              <span>Open Guide</span>
+            </button>
+          </div>
+
+          <!-- Material 5 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col justify-between space-y-4 text-left">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-md bg-tealbg/10 text-tealbg text-[10px] font-bold uppercase">PDF Notes</span>
+                <span class="text-[11px] text-tealbg-600">Sep 20, 2026</span>
+              </div>
+              <h3 class="font-display font-semibold text-base text-tealbg-950 leading-snug">
+                Seerah Series: The Early Companions in Makkah
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Islamic Studies</p>
+            </div>
+            <button type="button" onclick="openMaterialModal('Seerah Series: The Early Companions', 'PDF Notes', 'Islamic Studies')" class="w-full py-2 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider text-tealbg bg-tealbg/10 hover:bg-tealbg hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="file" class="w-3.5 h-3.5"></i>
+              <span>Open Notes</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: ASSIGNMENTS                         -->
+      <!-- ========================================== -->
+      <section id="tab-assignments" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Assignments & Submissions
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Submit your weekly recitations, homework sheets, and view teacher marks & feedback.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          
+          <!-- Assignment 1 (Pending) -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border-2 border-accent-lime flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-accent-lime text-tealbg-950 text-[10px] font-bold uppercase tracking-wider">Pending Submission</span>
+                <span class="text-xs text-tealbg-700 font-semibold">Due: Tomorrow, 6:00 PM</span>
+              </div>
+              <h3 class="text-base font-display font-semibold text-tealbg-950">
+                Audio Recitation: Surah Al-Fajr (Verses 1 to 15) with Tajweed
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Quran & Tajweed • Mentor: Ustadha Fatima Zahra</p>
+            </div>
+            <button type="button" onclick="openAssignmentSubmitModal('Audio Recitation: Surah Al-Fajr (Verses 1-15)')" class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-white bg-tealbg hover:bg-tealbg-600 rounded-full transition-all shadow-md flex items-center justify-center gap-2 flex-shrink-0">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Submit Assignment</span>
+            </button>
+          </div>
+
+          <!-- Assignment 2 (Pending) -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-6 rounded-3xl shadow-lg border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-tealbg/15 text-tealbg-950 text-[10px] font-bold uppercase tracking-wider">Pending</span>
+                <span class="text-xs text-tealbg-700 font-semibold">Due: Oct 08, 2026</span>
+              </div>
+              <h3 class="text-base font-display font-semibold text-tealbg-950">
+                Write Arabic Letters in Initial, Medial & Final Forms
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Arabic Foundation • Mentor: Ustadha Maryam</p>
+            </div>
+            <button type="button" onclick="openAssignmentSubmitModal('Arabic Letters in Initial & Medial Forms')" class="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-white bg-tealbg hover:bg-tealbg-600 rounded-full transition-all shadow-md flex items-center justify-center gap-2 flex-shrink-0">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Submit Assignment</span>
+            </button>
+          </div>
+
+          <!-- Assignment 3 (Submitted / Under Review) -->
+          <div class="dash-card bg-white/90 text-tealbg-950 p-6 rounded-3xl shadow-md border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left opacity-95">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-accent-lavender/30 text-tealbg-950 text-[10px] font-bold uppercase tracking-wider">Submitted • Under Review</span>
+                <span class="text-xs text-tealbg-600">Submitted on Sep 30</span>
+              </div>
+              <h3 class="text-base font-display font-semibold text-tealbg-950">
+                Seerah Worksheet: The Pledge of Aqabah & Lessons
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Islamic Studies • Mentor: Sheikh Omar Farooq</p>
+            </div>
+            <span class="px-4 py-2 text-xs font-medium text-tealbg bg-tealbg/10 rounded-full w-fit">Grading in Progress</span>
+          </div>
+
+          <!-- Assignment 4 (Completed) -->
+          <div class="dash-card bg-white/90 text-tealbg-950 p-6 rounded-3xl shadow-md border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-accent-lime/25 text-tealbg-950 text-[10px] font-bold uppercase tracking-wider">Completed • Grade: A+</span>
+                <span class="text-xs text-tealbg-600">Feedback: "Excellent pronunciation and precision!"</span>
+              </div>
+              <h3 class="text-base font-display font-semibold text-tealbg-950">
+                Salah Actions & Duas Checklist Memorization
+              </h3>
+              <p class="text-xs text-tealbg-800">Subject: Duas & Salah • Mentor: Sheikh Bilal Nadwi</p>
+            </div>
+            <div class="flex items-center gap-2 text-tealbg font-semibold text-xs bg-tealbg/10 px-3.5 py-2 rounded-full w-fit">
+              <i data-lucide="check-circle" class="w-4 h-4 text-tealbg"></i>
+              <span>Grade: 100/100</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 8: MENTOR                              -->
+      <!-- ========================================== -->
+      <section id="tab-mentor" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Your Dedicated Mentors
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Have a question about your lessons or homework? Send a message directly to your mentor.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Mentor 1 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 rounded-3xl shadow-lg border border-white/40 space-y-5 text-left flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-tealbg/15 text-tealbg font-display font-bold text-xl flex items-center justify-center shadow-inner">
+                FZ
+              </div>
+              <div>
+                <h3 class="font-display font-semibold text-lg text-tealbg-950">Ustadha Fatima Zahra</h3>
+                <p class="text-xs text-tealbg font-medium">Head of Quran & Tajweed</p>
+              </div>
+              <div class="pt-2 border-t border-tealbg/10 text-xs text-tealbg-800 space-y-1">
+                <p><strong>Available:</strong> Mon–Thu, 4:00 PM – 7:00 PM</p>
+                <p><strong>Support:</strong> Recitation check & guidance</p>
+              </div>
+            </div>
+            <button type="button" onclick="openMessageMentorModal('Ustadha Fatima Zahra', 'Quran & Tajweed')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Message Mentor</span>
+            </button>
+          </div>
+
+          <!-- Mentor 2 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 rounded-3xl shadow-lg border border-white/40 space-y-5 text-left flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-accent-lavender/30 text-tealbg-950 font-display font-bold text-xl flex items-center justify-center shadow-inner">
+                OF
+              </div>
+              <div>
+                <h3 class="font-display font-semibold text-lg text-tealbg-950">Sheikh Omar Farooq</h3>
+                <p class="text-xs text-tealbg font-medium">Islamic Studies & Seerah</p>
+              </div>
+              <div class="pt-2 border-t border-tealbg/10 text-xs text-tealbg-800 space-y-1">
+                <p><strong>Available:</strong> Mon–Thu, 3:00 PM – 6:00 PM</p>
+                <p><strong>Support:</strong> Story discussions & questions</p>
+              </div>
+            </div>
+            <button type="button" onclick="openMessageMentorModal('Sheikh Omar Farooq', 'Islamic Studies')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Message Mentor</span>
+            </button>
+          </div>
+
+          <!-- Mentor 3 -->
+          <div class="dash-card bg-white/95 text-tealbg-950 p-7 rounded-3xl shadow-lg border border-white/40 space-y-5 text-left flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-tealbg/15 text-tealbg font-display font-bold text-xl flex items-center justify-center shadow-inner">
+                MA
+              </div>
+              <div>
+                <h3 class="font-display font-semibold text-lg text-tealbg-950">Ustadha Maryam</h3>
+                <p class="text-xs text-tealbg font-medium">Arabic Language Mentor</p>
+              </div>
+              <div class="pt-2 border-t border-tealbg/10 text-xs text-tealbg-800 space-y-1">
+                <p><strong>Available:</strong> Tue–Sat, 4:30 PM – 7:30 PM</p>
+                <p><strong>Support:</strong> Vocabulary & grammar drills</p>
+              </div>
+            </div>
+            <button type="button" onclick="openMessageMentorModal('Ustadha Maryam', 'Arabic Foundation')" class="w-full py-2.5 px-4 rounded-full text-xs font-semibold tracking-wider uppercase text-white bg-tealbg hover:bg-tealbg-600 transition-all shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Message Mentor</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 9: NOTIFICATIONS                       -->
+      <!-- ========================================== -->
+      <section id="tab-notifications" class="tab-content hidden space-y-6">
+        <div class="text-left space-y-1">
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white tracking-tight">
+            Notifications & Announcements
+          </h2>
+          <p class="text-xs sm:text-sm text-tealtext-200">
+            Recent reminders, teacher notes, and school updates.
+          </p>
+        </div>
+
+        <div class="bg-tealbg-800/80 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 text-left">
+          
+          <div class="space-y-3">
+            <!-- Notification 1 -->
+            <div class="bg-white/15 border border-accent-lime/40 rounded-2xl p-4 flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-accent-lime text-tealbg-950 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="video" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-0.5 flex-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-semibold text-white">Live Class Reminder</h3>
+                  <span class="text-[10px] text-accent-lime font-mono">15 mins ago</span>
+                </div>
+                <p class="text-xs text-tealtext-200">
+                  Your <strong>Quran & Tajweed</strong> session with Ustadha Fatima starts at 04:30 PM today. Please have your Mushaf ready.
+                </p>
+              </div>
+            </div>
+
+            <!-- Notification 2 -->
+            <div class="bg-white/10 border border-white/15 rounded-2xl p-4 flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-accent-lavender/30 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-0.5 flex-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-semibold text-white">New Assignment Posted</h3>
+                  <span class="text-[10px] text-tealtext-300 font-mono">2 hours ago</span>
+                </div>
+                <p class="text-xs text-tealtext-200">
+                  Ustadha Fatima uploaded a new assignment: <em>Audio Recitation for Surah Al-Fajr (1-15)</em>. Due tomorrow.
+                </p>
+              </div>
+            </div>
+
+            <!-- Notification 3 -->
+            <div class="bg-white/10 border border-white/15 rounded-2xl p-4 flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-0.5 flex-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-semibold text-white">Teacher Message</h3>
+                  <span class="text-[10px] text-tealtext-300 font-mono">Yesterday</span>
+                </div>
+                <p class="text-xs text-tealtext-200">
+                  <strong>Ustadha Fatima:</strong> "BarakAllahu Feek, Zayan! Your pronunciation in yesterday's Tajweed practice was noticeably clearer."
+                </p>
+              </div>
+            </div>
+
+            <!-- Notification 4 -->
+            <div class="bg-white/10 border border-white/15 rounded-2xl p-4 flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-accent-lime/20 text-accent-lime flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="award" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-0.5 flex-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-semibold text-white">Zawiyah School Announcement</h3>
+                  <span class="text-[10px] text-tealtext-300 font-mono">2 days ago</span>
+                </div>
+                <p class="text-xs text-tealtext-200">
+                  Upcoming Weekend Islamic Quiz & Storytelling Session will be held on Saturday morning. All students are invited!
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS                                     -->
+  <!-- ========================================== -->
+
+  <!-- 1. LIVE CLASSROOM LAUNCH MODAL -->
+  <div id="classLaunchModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tealbg-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl text-left space-y-6 transform scale-95 transition-all duration-300" id="classModalCard">
+      <div class="flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-lime/20 border border-accent-lime/30 text-[10px] font-semibold text-accent-lime uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-lime animate-pulse"></span>
+          <span>Virtual Classroom</span>
+        </div>
+        <button type="button" onclick="closeClassModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <h3 id="classModalTitle" class="text-2xl font-display font-semibold text-white">Quran & Tajweed Live Class</h3>
+        <p id="classModalSubtitle" class="text-xs text-tealtext-200">Mentor: Ustadha Fatima Zahra • Scheduled at 04:30 PM</p>
+      </div>
+
+      <!-- Video Audio Diagnostic Preview Card -->
+      <div class="bg-tealbg-900/90 rounded-2xl p-5 border border-white/15 space-y-3">
+        <div class="flex items-center justify-between text-xs text-tealtext-200">
+          <span class="flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4 text-accent-lime"></i> Camera Ready</span>
+          <span class="text-accent-lime font-semibold">Active</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-tealtext-200">
+          <span class="flex items-center gap-2"><i data-lucide="mic" class="w-4 h-4 text-accent-lime"></i> Microphone Ready</span>
+          <span class="text-accent-lime font-semibold">Active</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-tealtext-200">
+          <span class="flex items-center gap-2"><i data-lucide="wifi" class="w-4 h-4 text-accent-lime"></i> Connection Quality</span>
+          <span class="text-accent-lime font-semibold">Fast & Secure</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <button type="button" onclick="simulateClassConnect()" class="flex-1 py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="video" class="w-4 h-4"></i>
+          <span id="launchBtnText">Enter Live Class</span>
+        </button>
+        <button type="button" onclick="closeClassModal()" class="py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-white bg-white/10 hover:bg-white/20 transition-all">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MESSAGE MENTOR MODAL -->
+  <div id="mentorMsgModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tealbg-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl text-left space-y-5 transform scale-95 transition-all duration-300" id="mentorModalCard">
+      <div class="flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-semibold text-accent-lime uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+          <span>Mentor Support</span>
+        </div>
+        <button type="button" onclick="closeMentorMsgModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="mentorMsgName" class="text-xl font-display font-semibold text-white">Message Ustadha Fatima</h3>
+        <p id="mentorMsgSubject" class="text-xs text-tealtext-200">Subject: Quran & Tajweed</p>
+      </div>
+
+      <form id="mentorMsgForm" onsubmit="handleSendMentorMsg(event)" class="space-y-3">
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">Your Message</label>
+          <textarea 
+            id="mentorMsgInput"
+            rows="4" 
+            placeholder="Type your question or clarification for your mentor..." 
+            required
+            class="w-full p-3.5 rounded-xl bg-tealbg-900/90 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime transition-all"
+          ></textarea>
+        </div>
+        <div id="msgSentAlert" class="hidden p-3 rounded-xl bg-accent-lime/20 border border-accent-lime/40 text-xs text-accent-lime font-medium text-center">
+          Message sent successfully! Your mentor will reply soon.
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="flex-1 py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Send Message</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. ASSIGNMENT SUBMISSION MODAL -->
+  <div id="assignmentModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tealbg-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl text-left space-y-5 transform scale-95 transition-all duration-300" id="assignmentModalCard">
+      <div class="flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-semibold text-accent-lime uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+          <span>Assignment Submission</span>
+        </div>
+        <button type="button" onclick="closeAssignmentModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="assignmentModalTitle" class="text-xl font-display font-semibold text-white">Audio Recitation: Surah Al-Fajr</h3>
+        <p class="text-xs text-tealtext-200">Upload audio recording or homework document.</p>
+      </div>
+
+      <form id="assignmentForm" onsubmit="handleAssignmentSubmit(event)" class="space-y-4">
+        <div class="border-2 border-dashed border-white/20 hover:border-accent-lime/60 rounded-2xl p-6 text-center space-y-2 cursor-pointer transition-colors bg-tealbg-900/50">
+          <i data-lucide="upload-cloud" class="w-8 h-8 text-accent-lime mx-auto"></i>
+          <p class="text-xs font-semibold text-white">Click or drag file here</p>
+          <p class="text-[11px] text-tealtext-300">Supports MP3, WAV, PDF, JPG, PNG (Max 25MB)</p>
+          <input type="file" id="assignFileInput" class="hidden" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">Optional Note for Mentor</label>
+          <input 
+            type="text" 
+            placeholder="e.g. Practiced verse 1-10 twice, focused on noon sakinah." 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/90 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime transition-all"
+          />
+        </div>
+
+        <div id="assignSuccessAlert" class="hidden p-3 rounded-xl bg-accent-lime/20 border border-accent-lime/40 text-xs text-accent-lime font-medium text-center">
+          Assignment uploaded successfully!
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="w-full py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Submit to Mentor</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. MATERIAL VIEWER MODAL -->
+  <div id="materialModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tealbg-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl text-left space-y-5 transform scale-95 transition-all duration-300" id="materialModalCard">
+      <div class="flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-semibold text-accent-lime uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span>
+          <span id="materialModalType">Learning Material</span>
+        </div>
+        <button type="button" onclick="closeMaterialModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="materialModalTitle" class="text-xl font-display font-semibold text-white">Tajweed Rules</h3>
+        <p id="materialModalSubject" class="text-xs text-tealtext-200">Subject: Quran & Tajweed</p>
+      </div>
+
+      <div class="bg-tealbg-900/90 rounded-2xl p-6 border border-white/15 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-white/10 text-accent-lime flex items-center justify-center mx-auto">
+          <i data-lucide="file-check" class="w-6 h-6"></i>
+        </div>
+        <p class="text-xs text-tealtext-100">
+          Document is verified and ready for study.
+        </p>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="downloadMaterialMock()" class="flex-1 py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span id="downloadBtnText">Download Resource</span>
+        </button>
+        <button type="button" onclick="closeMaterialModal()" class="py-3 px-5 rounded-full text-xs font-semibold tracking-widest uppercase text-white bg-white/10 hover:bg-white/20 transition-all">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. STUDENT FORGOT PASSWORD MODAL (2-STEP SECURE RECOVERY) -->
+  <div id="studentForgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tealbg-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl text-left space-y-5 transform scale-95 transition-all duration-300" id="studentForgotCard">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 text-accent-lime flex items-center justify-center">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-display font-semibold text-white">Reset Password</h3>
+            <p class="text-xs text-tealtext-300">Student Portal Account Recovery</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeStudentForgotModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Alert Box -->
+      <div id="studentForgotAlert" class="hidden p-3.5 rounded-2xl text-xs text-left"></div>
+
+      <!-- Step 1 Form: Enter Student ID / Contact -->
+      <form id="studentForgotStep1Form" class="space-y-4" novalidate autocomplete="off">
+        <p class="text-xs text-tealtext-200">
+          Enter your registered <strong>Student ID</strong> (e.g. <code class="font-mono text-accent-lime">ZAW-STU-001</code>) or your registered Contact Number to verify your identity.
+        </p>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-tealtext-100">Student ID / Contact Number <span class="text-accent-lime">*</span></label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="user-search" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              id="forgotStudentIdInput" 
+              placeholder="e.g. ZAW-STU-001" 
+              required 
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" 
+            />
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="closeStudentForgotModal()" class="flex-1 py-2.5 px-4 rounded-full text-xs font-semibold text-tealtext-200 bg-white/10 hover:bg-white/20 transition-all">
+            Cancel
+          </button>
+          <button type="submit" id="forgotVerifyIdBtn" class="flex-1 py-2.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-1.5">
+            <span>Verify Account</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Step 2 Form: Verify Contact Number & Reset Password -->
+      <form id="studentForgotStep2Form" class="hidden space-y-4" novalidate autocomplete="off">
+        <div class="p-3 rounded-2xl bg-tealbg-900/80 border border-accent-lime/30 text-xs text-left space-y-1">
+          <p class="text-white font-medium">Account Found: <span id="forgotMatchedName" class="text-accent-lime"></span></p>
+          <p class="text-tealtext-200">Registered Contact: <span id="forgotMaskedContact" class="font-mono text-white"></span></p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-tealtext-100">Confirm Full Registered Contact Number <span class="text-accent-lime">*</span></label>
+          <input 
+            type="text" 
+            id="forgotConfirmContactInput" 
+            placeholder="Type your full contact number to verify" 
+            required 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" 
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-tealtext-100">New Password <span class="text-accent-lime">*</span></label>
+          <input 
+            type="password" 
+            id="forgotNewPasswordInput" 
+            placeholder="Min 6 characters" 
+            required 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" 
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-tealtext-100">Confirm New Password <span class="text-accent-lime">*</span></label>
+          <input 
+            type="password" 
+            id="forgotConfirmPasswordInput" 
+            placeholder="Repeat new password" 
+            required 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lime transition-all" 
+          />
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="resetForgotStep1()" class="py-2.5 px-4 rounded-full text-xs font-semibold text-tealtext-200 bg-white/10 hover:bg-white/20 transition-all">
+            Back
+          </button>
+          <button type="submit" id="forgotResetSubmitBtn" class="flex-1 py-2.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-1.5">
+            <span>Update Password</span>
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MINIMAL CLEAN FOOTER -->
+  <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-6 border-t border-white/15 text-xs text-tealtext-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="font-display font-semibold text-white text-sm tracking-tight flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accent-lime"></span>
+        <span>Zawiyah</span>
+      </a>
+      <span class="text-white/30">•</span>
+      <span>Student Portal v2.0</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-6">
+      <a href="index.html" class="hover:text-white transition-colors">Public School Home</a>
+      <a href="index.html#courses" class="hover:text-white transition-colors">Courses</a>
+      <a href="teacher-login.html" class="text-tealtext-300 hover:text-accent-lime transition-colors">Teacher Login</a>
+      <a href="mailto:portal@zawiyah.school" class="hover:text-white transition-colors">portal@zawiyah.school</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="portal.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

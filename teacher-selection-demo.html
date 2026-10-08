@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Selection Demo Class | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Apply for the Zawiyah Teacher Selection Demo Class. Take the next step towards joining our global online Islamic teaching team via an online Google Meet demo." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://zawiyahonline.com/teacher-selection-demo.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zawiyahonline.com/teacher-selection-demo.html" />
+  <meta property="og:title" content="Teacher Selection Demo Class | Zawiyah Online Islamic School" />
+  <meta property="og:description" content="Apply for a demo class and take the next step towards joining the Zawiyah teaching team." />
+  <meta property="og:image" content="https://zawiyahonline.com/assets/logo.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c188d5'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css?v=14" />
+</head>
+<body class="bg-tealbg text-white font-sans antialiased selection:bg-white selection:text-tealbg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- NAVIGATION -->
+  <header class="relative z-50 w-full pt-5 sm:pt-6 pb-4 px-5 sm:px-8 md:px-12 max-w-7xl mx-auto flex items-center justify-between transition-all duration-300">
+    <!-- Brand Logo -->
+    <a href="index.html" class="group flex items-center transition-transform duration-200 hover:scale-105 py-1" aria-label="Zawiyah Home">
+      <img src="assets/logo.png?v=7" alt="Zawiyah Online Islamic School" class="w-[155px] sm:w-[165px] md:w-[175px] lg:w-[190px] h-auto object-contain select-none" />
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-tealtext-200">
+      <a href="index.html#home" class="text-tealtext-200 hover:text-white transition-colors duration-200">Home</a>
+      <a href="index.html#about" class="text-tealtext-200 hover:text-white transition-colors duration-200">About</a>
+      <a href="index.html#courses" class="text-tealtext-200 hover:text-white transition-colors duration-200">Courses</a>
+      <a href="contact.html" class="text-tealtext-200 hover:text-white transition-colors duration-200">Contact</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-3">
+      <a href="student-portal.html" class="gradient-badge hidden md:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-100 rounded-full transition-all duration-200 hover:-translate-y-0.5">
+        <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-accent-lime"></i>
+        <span>Student Portal</span>
+      </a>
+
+      <a href="teacher-login.html" class="gradient-badge inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-100 rounded-full transition-all duration-200 hover:-translate-y-0.5">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-accent-lavender"></i>
+        <span>Teacher Portal</span>
+      </a>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button id="mobileMenuBtn" aria-label="Open menu" class="md:hidden p-2 text-white hover:text-accent-lime focus:outline-none transition-colors">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE NAVIGATION DRAWER -->
+  <div id="mobileMenu" class="fixed inset-0 z-50 bg-tealbg-950/98 backdrop-blur-2xl flex flex-col justify-between items-center py-6 px-6 text-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
+    <!-- Top Row -->
+    <div class="w-full max-w-sm flex items-center justify-between pb-3 border-b border-white/10">
+      <img src="assets/logo.png?v=7" alt="Zawiyah Online Islamic School" class="w-[125px] h-auto object-contain select-none" />
+      <button id="closeMobileMenuBtn" aria-label="Close menu" class="p-2 -mr-2 text-white hover:text-accent-lime transition-colors">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- Middle: Navigation Links -->
+    <div class="w-full max-w-sm flex flex-col items-stretch gap-3.5 my-auto py-4">
+      <div class="flex flex-col items-center gap-2.5">
+        <a href="index.html#home" class="mobile-nav-link text-lg font-semibold tracking-wide text-white hover:text-accent-lime transition-colors">Home</a>
+        <a href="index.html#about" class="mobile-nav-link text-lg font-medium tracking-wide text-tealtext-200 hover:text-white transition-colors">About</a>
+        <a href="index.html#courses" class="mobile-nav-link text-lg font-medium tracking-wide text-tealtext-200 hover:text-white transition-colors">Courses</a>
+        <a href="contact.html" class="mobile-nav-link text-lg font-medium tracking-wide text-tealtext-200 hover:text-white transition-colors">Contact</a>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <a href="student-portal.html" class="mobile-nav-link flex flex-col items-center justify-center p-3 rounded-2xl bg-tealbg-800/90 hover:bg-tealbg-800 border border-accent-lime/40 text-white hover:text-accent-lime transition-all shadow-md">
+          <div class="w-9 h-9 rounded-xl bg-accent-lime/20 flex items-center justify-center mb-1.5">
+            <i data-lucide="graduation-cap" class="w-5 h-5 text-accent-lime"></i>
+          </div>
+          <span class="text-xs font-bold">Student Portal</span>
+        </a>
+
+        <a href="teacher-login.html" class="mobile-nav-link flex flex-col items-center justify-center p-3 rounded-2xl bg-tealbg-800/90 hover:bg-tealbg-800 border border-accent-lavender/40 text-white hover:text-accent-lavender transition-all shadow-md">
+          <div class="w-9 h-9 rounded-xl bg-accent-lavender/20 flex items-center justify-center mb-1.5">
+            <i data-lucide="shield-check" class="w-5 h-5 text-accent-lavender"></i>
+          </div>
+          <span class="text-xs font-bold">Teacher Login</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="w-full max-w-sm pt-2 text-[11px] text-tealtext-400">
+      Zawiyah Online Islamic School • Faculty Recruitment
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="relative z-10 flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 md:px-8 py-6 sm:py-10">
+
+    <!-- PAGE HEADER -->
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+      
+      <!-- Small Professional Label -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-tealbg-900/90 border border-accent-lavender/50 text-accent-lavender text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+        <i data-lucide="award" class="w-3.5 h-3.5 text-accent-lavender"></i>
+        <span>TEACHER SELECTION</span>
+      </div>
+
+      <!-- Main Heading -->
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight mb-3">
+        Teacher Selection <span class="text-accent-lavender">Demo Class</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-sm sm:text-base md:text-lg text-tealtext-100 font-normal leading-relaxed mb-4">
+        Apply for a demo class and take the next step towards joining the Zawiyah teaching team.
+      </p>
+
+      <!-- Small Supporting Text -->
+      <p class="text-xs sm:text-sm text-tealtext-300 max-w-xl mx-auto leading-relaxed">
+        Your demo class will help our academic team understand your teaching approach, communication and suitability for the Zawiyah teaching environment.
+      </p>
+
+    </div>
+
+    <!-- APPLICATION SECTION CONTAINER (Split Grid on Desktop: Form on Left, Process & Notes on Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      
+      <!-- APPLICATION FORM CARD (Primary Focus) -->
+      <div class="lg:col-span-7 bg-tealbg-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/20 shadow-2xl relative overflow-hidden">
+        
+        <!-- Subtle Top Glow -->
+        <div class="absolute -top-20 -right-20 w-48 h-48 bg-accent-lavender/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Card Header -->
+        <div class="flex items-center justify-between pb-4 mb-6 border-b border-white/15">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-accent-lavender/20 border border-accent-lavender/40 flex items-center justify-center text-accent-lavender">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-lg sm:text-xl font-display font-bold text-white">Application Form</h2>
+              <p class="text-xs text-tealtext-300">Submit your details to schedule your demo</p>
+            </div>
+          </div>
+          <span class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-accent-lavender/15 text-accent-lavender border border-accent-lavender/30">
+            Official
+          </span>
+        </div>
+
+        <!-- FORM -->
+        <form id="teacherDemoForm" class="space-y-4 sm:space-y-5" novalidate>
+          
+          <!-- 1. Full Name -->
+          <div class="space-y-1.5">
+            <label for="fullName" class="block text-xs font-semibold text-tealtext-100">
+              Full Name <span class="text-accent-lavender">*</span>
+            </label>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="fullName" 
+                name="fullName"
+                required 
+                placeholder="e.g. Usthad / Usthada Full Name" 
+                class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all"
+              />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <p id="fullNameErr" class="hidden text-[11px] text-accent-lavender font-medium">Please enter your full name.</p>
+          </div>
+
+          <!-- 2. Place & Qualification (2-Column Grid on sm+) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Place -->
+            <div class="space-y-1.5">
+              <label for="place" class="block text-xs font-semibold text-tealtext-100">
+                Place / Location <span class="text-accent-lavender">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="place" 
+                  name="place"
+                  required 
+                  placeholder="e.g. Malappuram / Calicut / Dubai" 
+                  class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all"
+                />
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                  <i data-lucide="map-pin" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p id="placeErr" class="hidden text-[11px] text-accent-lavender font-medium">Please enter your place/location.</p>
+            </div>
+
+            <!-- Qualification -->
+            <div class="space-y-1.5">
+              <label for="qualification" class="block text-xs font-semibold text-tealtext-100">
+                Qualification <span class="text-accent-lavender">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="qualification" 
+                  name="qualification"
+                  required 
+                  placeholder="e.g. Afzal-ul-Ulama, MA Arabic, Hafiz" 
+                  class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all"
+                />
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                  <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p id="qualificationErr" class="hidden text-[11px] text-accent-lavender font-medium">Please enter your educational qualification.</p>
+            </div>
+
+          </div>
+
+          <!-- 3. Preferred Demo Class Day & Preferred Demo Class Time -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Day Selection -->
+            <div class="space-y-1.5">
+              <label for="demoDay" class="block text-xs font-semibold text-tealtext-100">
+                Preferred Demo Class Day <span class="text-accent-lavender">*</span>
+              </label>
+              <div class="relative">
+                <select 
+                  id="demoDay" 
+                  name="demoDay"
+                  required 
+                  class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all appearance-none cursor-pointer"
+                >
+                  <option value="" disabled selected class="bg-tealbg-950 text-tealtext-400">Select preferred day</option>
+                  <option value="Saturday" class="bg-tealbg-950 text-white">Saturday</option>
+                  <option value="Sunday" class="bg-tealbg-950 text-white">Sunday</option>
+                  <option value="Monday" class="bg-tealbg-950 text-white">Monday</option>
+                  <option value="Tuesday" class="bg-tealbg-950 text-white">Tuesday</option>
+                  <option value="Wednesday" class="bg-tealbg-950 text-white">Wednesday</option>
+                  <option value="Thursday" class="bg-tealbg-950 text-white">Thursday</option>
+                  <option value="Friday" class="bg-tealbg-950 text-white">Friday</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                  <i data-lucide="calendar" class="w-4 h-4 text-accent-lavender"></i>
+                </div>
+              </div>
+              <p id="demoDayErr" class="hidden text-[11px] text-accent-lavender font-medium">Please select your preferred demo day.</p>
+            </div>
+
+            <!-- Time Selection / Time Picker -->
+            <div class="space-y-1.5">
+              <label for="demoTime" class="block text-xs font-semibold text-tealtext-100">
+                Preferred Demo Class Time <span class="text-accent-lavender">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="demoTime" 
+                  name="demoTime"
+                  required 
+                  placeholder="e.g. 04:30 PM (or Morning / Evening)" 
+                  class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all"
+                />
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                  <i data-lucide="clock" class="w-4 h-4 text-accent-lavender"></i>
+                </div>
+              </div>
+              <p id="demoTimeErr" class="hidden text-[11px] text-accent-lavender font-medium">Please specify your preferred demo time.</p>
+            </div>
+
+          </div>
+
+          <!-- 4. Contact Number -->
+          <div class="space-y-1.5">
+            <label for="contactNumber" class="block text-xs font-semibold text-tealtext-100">
+              Contact Number (WhatsApp) <span class="text-accent-lavender">*</span>
+            </label>
+            <div class="relative">
+              <input 
+                type="tel" 
+                id="contactNumber" 
+                name="contactNumber"
+                required 
+                placeholder="e.g. +91 9876543210 / WhatsApp number" 
+                class="w-full px-4 py-3 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-accent-lavender focus:ring-1 focus:ring-accent-lavender transition-all"
+              />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <p id="contactNumberErr" class="hidden text-[11px] text-accent-lavender font-medium">Please enter your active contact number.</p>
+          </div>
+
+          <!-- GOOGLE MEET INFORMATION BANNER (Prominent & Clear) -->
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-tealbg-950/70 border border-accent-lavender/30 text-tealtext-100 text-xs">
+            <div class="w-8 h-8 rounded-xl bg-accent-lavender/20 flex items-center justify-center text-accent-lavender shrink-0">
+              <i data-lucide="video" class="w-4 h-4"></i>
+            </div>
+            <div class="leading-relaxed">
+              <span class="font-bold text-white">Online Video Demo:</span> Demo class will be conducted online through <strong>Google Meet</strong>.
+            </div>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <div class="pt-2">
+            <button 
+              type="submit" 
+              id="submitBtn"
+              class="w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-bold tracking-widest uppercase transition-all shadow-xl hover:shadow-2xl active:scale-[0.99] flex items-center justify-center gap-3 cursor-pointer bg-gradient-to-r from-purple-600 via-accent-lavender to-purple-500 text-white hover:brightness-110"
+            >
+              <span>APPLY FOR DEMO CLASS</span>
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Status indicator feedback -->
+          <div id="formStatusNotice" class="hidden p-3 rounded-xl bg-accent-lavender/20 border border-accent-lavender/40 text-xs text-white text-center font-medium">
+            Preparing your demo application and opening WhatsApp...
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- RIGHT SIDE: SELECTION CRITERIA & DEMO DETAILS -->
+      <div class="lg:col-span-5 space-y-5">
+        
+        <!-- Selection Journey Steps -->
+        <div class="bg-tealbg-900/70 backdrop-blur-lg rounded-3xl p-6 border border-white/15 shadow-xl space-y-4">
+          <h3 class="text-base font-display font-bold text-white flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-accent-lime"></i>
+            <span>Selection Process</span>
+          </h3>
+
+          <div class="space-y-3.5 text-xs text-tealtext-200">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-accent-lime font-bold shrink-0 mt-0.5 text-[11px]">
+                1
+              </div>
+              <div>
+                <strong class="text-white block text-sm">Submit Application</strong>
+                Fill out the demo request form with your preferred day and time.
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-accent-lime font-bold shrink-0 mt-0.5 text-[11px]">
+                2
+              </div>
+              <div>
+                <strong class="text-white block text-sm">WhatsApp Confirmation</strong>
+                Our academic team confirms your time slot and sends the Google Meet link.
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-accent-lime font-bold shrink-0 mt-0.5 text-[11px]">
+                3
+              </div>
+              <div>
+                <strong class="text-white block text-sm">Live Google Meet Demo</strong>
+                Demonstrate a short 10–15 min teaching sample with our academic panel.
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-accent-lime font-bold shrink-0 mt-0.5 text-[11px]">
+                4
+              </div>
+              <div>
+                <strong class="text-white block text-sm">Onboarding & Student Allocation</strong>
+                Selected teachers receive orientation and student batch allocations.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Evaluation Focus Card -->
+        <div class="bg-tealbg-900/70 backdrop-blur-lg rounded-3xl p-6 border border-white/15 shadow-xl space-y-3">
+          <h3 class="text-base font-display font-bold text-white flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-accent-lavender"></i>
+            <span>Evaluation Criteria</span>
+          </h3>
+          <p class="text-xs text-tealtext-200 leading-relaxed">
+            Our academic panel assesses:
+          </p>
+          <ul class="space-y-2 text-xs text-tealtext-200">
+            <li class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-accent-lavender shrink-0"></i>
+              <span>Quran Tajweed accuracy & Makharij</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-accent-lavender shrink-0"></i>
+              <span>Patience & warm communication with young learners</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-accent-lavender shrink-0"></i>
+              <span>Online whiteboard & digital teaching readiness</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-accent-lavender shrink-0"></i>
+              <span>Punctuality and professional commitment</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Direct Support Desk -->
+        <div class="p-4 rounded-2xl bg-tealbg-950/60 border border-white/10 text-xs text-tealtext-300 flex items-center justify-between gap-3">
+          <div>
+            <div class="text-white font-semibold">Need Help with Your Application?</div>
+            <div class="text-[11px] text-tealtext-400">Academic Recruitment Office</div>
+          </div>
+          <a 
+            href="https://wa.me/916282552309?text=Assalamu%20Alaikum%2C%20I%20have%20a%20question%20regarding%20the%20Zawiyah%20Teacher%20Selection%20Demo%20Class." 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] transition-colors shrink-0 flex items-center gap-1.5"
+          >
+            <i data-lucide="message-circle" class="w-3.5 h-3.5 text-accent-lime"></i>
+            <span>Enquire</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MINIMAL CLEAN FOOTER -->
+  <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-8 border-t border-white/15 mt-10">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-tealtext-300">
+      
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="font-display font-semibold text-white text-sm tracking-tight flex items-center gap-2">
+          <img src="assets/logo.png?v=7" alt="Zawiyah Online Islamic School" class="w-[120px] h-auto object-contain select-none" />
+        </a>
+        <span class="text-white/30">•</span>
+        <span>© <span id="currentYear"></span> Zawiyah Online Islamic School</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-6">
+        <a href="index.html#about" class="hover:text-white transition-colors">About</a>
+        <a href="index.html#courses" class="hover:text-white transition-colors">Courses</a>
+        <a href="teacher-selection-demo.html" class="text-accent-lavender font-semibold hover:underline">Teacher Selection Demo Class</a>
+        <a href="teacher-login.html" class="hover:text-white transition-colors">Teacher Portal</a>
+        <a href="contact.html" class="hover:text-white transition-colors">Contact</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT HANDLERS -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Set dynamic current year in footer
+    const currentYearEl = document.getElementById('currentYear');
+    if (currentYearEl) {
+      currentYearEl.textContent = new Date().getFullYear();
+    }
+
+    // Mobile Navigation Drawer Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMobileMenuBtn = document.getElementById('closeMobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    function openMobileMenu() {
+      if (mobileMenu) {
+        mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMobileMenu() {
+      if (mobileMenu) {
+        mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileMenu);
+    if (closeMobileMenuBtn) closeMobileMenuBtn.addEventListener('click', closeMobileMenu);
+
+    // Form Submission & Validation Handler
+    const teacherDemoForm = document.getElementById('teacherDemoForm');
+    const fullNameInput = document.getElementById('fullName');
+    const placeInput = document.getElementById('place');
+    const qualificationInput = document.getElementById('qualification');
+    const demoDaySelect = document.getElementById('demoDay');
+    const demoTimeInput = document.getElementById('demoTime');
+    const contactNumberInput = document.getElementById('contactNumber');
+    const formStatusNotice = document.getElementById('formStatusNotice');
+    const submitBtn = document.getElementById('submitBtn');
+
+    teacherDemoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Reset error states
+      let hasError = false;
+      const fields = [
+        { el: fullNameInput, err: document.getElementById('fullNameErr') },
+        { el: placeInput, err: document.getElementById('placeErr') },
+        { el: qualificationInput, err: document.getElementById('qualificationErr') },
+        { el: demoDaySelect, err: document.getElementById('demoDayErr') },
+        { el: demoTimeInput, err: document.getElementById('demoTimeErr') },
+        { el: contactNumberInput, err: document.getElementById('contactNumberErr') },
+      ];
+
+      fields.forEach(item => {
+        if (!item.el.value || !item.el.value.trim()) {
+          item.el.classList.add('border-accent-lavender');
+          if (item.err) item.err.classList.remove('hidden');
+          if (!hasError) item.el.focus();
+          hasError = true;
+        } else {
+          item.el.classList.remove('border-accent-lavender');
+          if (item.err) item.err.classList.add('hidden');
+        }
+      });
+
+      if (hasError) return;
+
+      const fullName = fullNameInput.value.trim();
+      const place = placeInput.value.trim();
+      const qualification = qualificationInput.value.trim();
+      const day = demoDaySelect.value.trim();
+      const time = demoTimeInput.value.trim();
+      const contactNumber = contactNumberInput.value.trim();
+
+      // Exact WhatsApp Message Format requested by user
+      const message = `Assalamu Alaikum,
+
+I would like to apply for the Zawiyah Teacher Selection Demo Class.
+
+Name: ${fullName}
+Place: ${place}
+Qualification: ${qualification}
+Preferred Demo Day: ${day}
+Preferred Demo Time: ${time}
+Contact Number: ${contactNumber}
+
+I understand that the Teacher Selection Demo Class will be conducted online through Google Meet.
+
+Thank you.`;
+
+      // Show temporary notice
+      if (formStatusNotice) {
+        formStatusNotice.classList.remove('hidden');
+      }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>REDIRECTING TO WHATSAPP...</span>';
+      }
+
+      // WhatsApp URL (Using official number: 6282552309 with international prefix 916282552309)
+      const waUrl = `https://wa.me/916282552309?text=${encodeURIComponent(message)}`;
+
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>APPLY FOR DEMO CLASS</span><i data-lucide="send" class="w-4 h-4"></i>';
+          lucide.createIcons();
+        }
+      }, 500);
+    });
+
+    // Clear error on input
+    [fullNameInput, placeInput, qualificationInput, demoDaySelect, demoTimeInput, contactNumberInput].forEach(input => {
+      if (!input) return;
+      input.addEventListener('input', () => {
+        input.classList.remove('border-accent-lavender');
+        const err = document.getElementById(input.id + 'Err');
+        if (err) err.classList.add('hidden');
+      });
+      input.addEventListener('change', () => {
+        input.classList.remove('border-accent-lavender');
+        const err = document.getElementById(input.id + 'Err');
+        if (err) err.classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

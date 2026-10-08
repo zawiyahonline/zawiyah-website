@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Secure administrative governance portal for Zawiyah Online Islamic School." />
+  
+  <!-- Strict Immediate Access Guard: Prevent DOM flash if unauthenticated -->
+  <script>
+    (function() {
+      try {
+        var rawSession = sessionStorage.getItem('zawiyah_auth_session') || localStorage.getItem('zawiyah_auth_session');
+        var session = rawSession ? JSON.parse(rawSession) : null;
+        var isAdminFlag = localStorage.getItem('zawiyah_admin_logged_in') === 'true' || sessionStorage.getItem('zawiyah_admin_logged_in') === 'true';
+        if (!session || session.role !== 'ADMIN' || !isAdminFlag) {
+          window.location.replace('admin-login.html');
+        }
+      } catch (e) {
+        window.location.replace('admin-login.html');
+      }
+    })();
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23baed2c'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-tealbg text-white font-sans antialiased selection:bg-white selection:text-tealbg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Ambient Glow & Interactive Canvas Dots -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    <canvas id="dotsCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+  </div>
+
+  <!-- ADMIN NAVBAR -->
+  <header class="relative z-50 w-full pt-4 pb-3 px-4 sm:px-8 md:px-12 max-w-7xl mx-auto flex items-center justify-between transition-all duration-300 border-b border-white/10">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="group flex items-center gap-2 text-white font-display font-semibold text-lg tracking-tight">
+        <img src="assets/logo.png?v=6" alt="Zawiyah Online Islamic School" class="w-[125px] sm:w-[135px] md:w-[150px] h-auto object-contain select-none" />
+      </a>
+      <span class="text-white/30 hidden sm:inline">•</span>
+      <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-sans text-[11px] font-semibold tracking-wider uppercase border border-amber-400/30">
+        Admin Governance Portal
+      </span>
+    </div>
+
+    <!-- Right Controls: Active Admin Profile & Logout -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+        <div id="adminNavAvatar" class="w-6 h-6 rounded-full bg-amber-400 text-tealbg-950 font-display font-bold text-xs flex items-center justify-center">
+          AD
+        </div>
+        <span id="adminNavName" class="text-xs font-medium text-white hidden sm:inline">Admin Directorate</span>
+      </div>
+
+      <button 
+        type="button" 
+        id="adminLogoutBtn" 
+        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-red-200 hover:text-white bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 rounded-full transition-all duration-200"
+      >
+        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN ADMIN PORTAL WRAPPER -->
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 md:px-12 py-8 space-y-8">
+    
+    <!-- Top Welcome Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-tealbg-800/80 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-xl text-left">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-accent-lime/20 text-accent-lime text-[11px] font-bold uppercase tracking-wider">
+            Directorate Session Active
+          </span>
+          <span class="text-xs text-tealtext-300">RBAC Level: System Administrator</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+          Zawiyah Central Administration
+        </h1>
+        <p class="text-xs sm:text-sm text-tealtext-200 max-w-2xl">
+          Supervise active faculty members, manage lifecycle statuses (Active, Inactive, Left, Suspended), review candidate registrations, and oversee class schedules.
+        </p>
+      </div>
+
+      <!-- Quick Action Pill -->
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="switchAdminTab('applications', 'PENDING')" class="px-4 py-2.5 rounded-2xl bg-accent-lime text-tealbg-950 hover:bg-white text-xs font-semibold uppercase tracking-wider transition-all shadow-md flex items-center gap-2 flex-shrink-0">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Pending Applications (<span id="bannerPendingBadge">0</span>)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-white/10">
+      <button type="button" class="admin-nav-btn active px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="dashboard">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        <span>Dashboard</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0 relative" data-tab="applications">
+        <i data-lucide="user-check" class="w-4 h-4"></i>
+        <span>Teacher Applications</span>
+        <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 rounded-full bg-amber-400 text-tealbg-950 font-bold text-[10px] leading-tight">0</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="teachers">
+        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+        <span>Teachers</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="students">
+        <i data-lucide="users" class="w-4 h-4"></i>
+        <span>Students</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="classes">
+        <i data-lucide="book-open" class="w-4 h-4"></i>
+        <span>Classes</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="schedule">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span>Schedule</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="notifications">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+        <span>Notifications</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0 text-amber-300" data-tab="admin-users">
+        <i data-lucide="shield-check" class="w-4 h-4"></i>
+        <span>Admin Users</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0 text-accent-lime" data-tab="reviews">
+        <i data-lucide="star" class="w-4 h-4"></i>
+        <span>Reviews</span>
+      </button>
+      <button type="button" class="admin-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all flex-shrink-0" data-tab="settings">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Settings</span>
+      </button>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 1: DASHBOARD / OVERVIEW                         -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-dashboard" class="admin-tab-content space-y-8">
+      
+      <!-- Metric Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 text-left">
+        
+        <!-- Card 1: Pending Applications -->
+        <div onclick="switchAdminTab('applications', 'PENDING')" class="cursor-pointer bg-tealbg-800/80 hover:bg-tealbg-800 border border-amber-400/40 rounded-3xl p-5 shadow-lg space-y-3 transition-all transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-amber-400/20 text-amber-300 flex items-center justify-center">
+              <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300">Action Needed</span>
+          </div>
+          <div>
+            <span class="text-3xl font-display font-bold text-white tracking-tight" id="metricPendingCount">0</span>
+            <p class="text-xs font-semibold text-amber-300 mt-0.5">Pending Applications</p>
+            <p class="text-[11px] text-tealtext-300 mt-1">Awaiting review & issuance</p>
+          </div>
+        </div>
+
+        <!-- Card 2: Active Teachers -->
+        <div onclick="switchAdminTab('teachers', 'ACTIVE')" class="cursor-pointer bg-tealbg-800/80 hover:bg-tealbg-800 border border-accent-lime/40 rounded-3xl p-5 shadow-lg space-y-3 transition-all transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-accent-lime/20 text-accent-lime flex items-center justify-center">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent-lime/20 text-accent-lime">Active</span>
+          </div>
+          <div>
+            <span class="text-3xl font-display font-bold text-white tracking-tight" id="metricTeachersCount">0</span>
+            <p class="text-xs font-semibold text-accent-lime mt-0.5">Active Teachers</p>
+            <p class="text-[11px] text-tealtext-300 mt-1">Teaching at Zawiyah</p>
+          </div>
+        </div>
+
+        <!-- Card 3: Total Students -->
+        <div onclick="switchAdminTab('students')" class="cursor-pointer bg-tealbg-800/80 hover:bg-tealbg-800 border border-white/20 rounded-3xl p-5 shadow-lg space-y-3 transition-all transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-accent-lavender/20 text-accent-lavender flex items-center justify-center">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-tealtext-200">Enrolled</span>
+          </div>
+          <div>
+            <span class="text-3xl font-display font-bold text-white tracking-tight" id="metricStudentsCount">0</span>
+            <p class="text-xs font-semibold text-white mt-0.5">Total Students</p>
+            <p class="text-[11px] text-tealtext-300 mt-1">Across all tracks</p>
+          </div>
+        </div>
+
+        <!-- Card 4: Active Classes -->
+        <div onclick="switchAdminTab('classes')" class="cursor-pointer bg-tealbg-800/80 hover:bg-tealbg-800 border border-white/20 rounded-3xl p-5 shadow-lg space-y-3 transition-all transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-tealtext-200">Live</span>
+          </div>
+          <div>
+            <span class="text-3xl font-display font-bold text-white tracking-tight" id="metricClassesCount">0</span>
+            <p class="text-xs font-semibold text-white mt-0.5">Active Classes</p>
+            <p class="text-[11px] text-tealtext-300 mt-1">Group & 1-on-1</p>
+          </div>
+        </div>
+
+        <!-- Card 5: Total Website Visitors (Admin Only Protected Metric) -->
+        <div class="bg-tealbg-800/80 hover:bg-tealbg-800 border border-teal-400/40 rounded-3xl p-5 shadow-lg space-y-3 transition-all transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-teal-400/20 text-teal-300 flex items-center justify-center">
+              <i data-lucide="eye" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-400/20 text-teal-300">Live Traffic</span>
+          </div>
+          <div>
+            <span class="text-3xl font-display font-bold text-white tracking-tight" id="metricVisitorsCount">1,248</span>
+            <p class="text-xs font-semibold text-teal-300 mt-0.5">Total Website Visitors</p>
+            <p class="text-[11px] text-tealtext-300 mt-1">Unique visitor sessions</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Recent Applications Section -->
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6 text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-display font-semibold text-white">Recent Teacher Applications</h3>
+            <p class="text-xs text-tealtext-300">Quickly review and approve new educator requests</p>
+          </div>
+          <button type="button" onclick="switchAdminTab('applications')" class="text-xs font-semibold text-accent-lime hover:underline flex items-center gap-1">
+            <span>View All Applications</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <div id="dashboardRecentAppsList" class="space-y-3">
+          <!-- Populated dynamically by admin.js -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 2: TEACHER APPLICATIONS                         -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-applications" class="admin-tab-content hidden space-y-6 text-left">
+      
+      <!-- Filter Sub-Tabs and Search -->
+      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-tealbg-800/80 border border-white/20 rounded-3xl p-4">
+        
+        <!-- Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+          <button type="button" class="app-filter-tab active px-4 py-2 rounded-xl text-xs tracking-wider uppercase transition-all" data-status="ALL">
+            All (<span id="countAllApps">0</span>)
+          </button>
+          <button type="button" class="app-filter-tab px-4 py-2 rounded-xl text-xs tracking-wider uppercase transition-all" data-status="PENDING">
+            Pending (<span id="countPendingApps">0</span>)
+          </button>
+          <button type="button" class="app-filter-tab px-4 py-2 rounded-xl text-xs tracking-wider uppercase transition-all" data-status="APPROVED">
+            Approved (<span id="countApprovedApps">0</span>)
+          </button>
+          <button type="button" class="app-filter-tab px-4 py-2 rounded-xl text-xs tracking-wider uppercase transition-all" data-status="REJECTED">
+            Rejected (<span id="countRejectedApps">0</span>)
+          </button>
+        </div>
+
+        <!-- Search Box -->
+        <div class="relative w-full md:w-72">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </div>
+          <input 
+            type="text" 
+            id="appSearchInput" 
+            placeholder="Search by name, contact number, subject..." 
+            class="w-full pl-9 pr-4 py-2 rounded-xl bg-tealbg-900/90 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime transition-all"
+          />
+        </div>
+
+      </div>
+
+      <!-- Applications List Container -->
+      <div id="applicationsGrid" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 3: TEACHERS MANAGEMENT & DIRECTORY              -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-teachers" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        
+        <!-- Header & Top Controls -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h3 class="text-xl font-display font-semibold text-white">Faculty Status & Records Management</h3>
+              <span class="px-2.5 py-0.5 rounded-full bg-accent-lime/20 text-accent-lime text-[10px] font-bold uppercase tracking-wider">
+                Historical Archive Active
+              </span>
+            </div>
+            <p class="text-xs text-tealtext-300 mt-1">
+              Search teachers, manage lifecycle statuses (Active, Inactive, Left, Suspended), and inspect comprehensive faculty dossiers.
+            </p>
+          </div>
+
+          <div class="text-xs text-tealtext-200">
+            Total Faculty Records: <span id="facultyDirectoryCount" class="font-bold text-accent-lime">0</span>
+          </div>
+        </div>
+
+        <!-- Prominent Teacher Search Bar & Status Filters -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-tealbg-900/80 border border-white/15 rounded-2xl p-4">
+          
+          <!-- Status Filter Tabs: All, Active, Inactive, Left, Suspended -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+            <button type="button" class="teacher-filter-tab active px-3.5 py-1.5 rounded-xl text-xs tracking-wider uppercase transition-all" data-tstatus="ALL">
+              All (<span id="countTAll">0</span>)
+            </button>
+            <button type="button" class="teacher-filter-tab px-3.5 py-1.5 rounded-xl text-xs tracking-wider uppercase transition-all text-accent-lime" data-tstatus="ACTIVE">
+              Active (<span id="countTActive">0</span>)
+            </button>
+            <button type="button" class="teacher-filter-tab px-3.5 py-1.5 rounded-xl text-xs tracking-wider uppercase transition-all text-amber-300" data-tstatus="INACTIVE">
+              Inactive (<span id="countTInactive">0</span>)
+            </button>
+            <button type="button" class="teacher-filter-tab px-3.5 py-1.5 rounded-xl text-xs tracking-wider uppercase transition-all text-tealtext-300" data-tstatus="LEFT">
+              Left (<span id="countTLeft">0</span>)
+            </button>
+            <button type="button" class="teacher-filter-tab px-3.5 py-1.5 rounded-xl text-xs tracking-wider uppercase transition-all text-red-300" data-tstatus="SUSPENDED">
+              Suspended (<span id="countTSuspended">0</span>)
+            </button>
+          </div>
+
+          <!-- Real-Time Instant Search Box -->
+          <div class="relative w-full md:w-80">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              id="teacherSearchInput" 
+              placeholder="Search teacher by name, Teacher ID, or contact number..." 
+              class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-tealbg-950/90 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime transition-all"
+            />
+          </div>
+
+        </div>
+
+        <!-- Teacher Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-tealtext-200 border-collapse">
+            <thead>
+              <tr class="border-b border-white/15 text-white uppercase text-[11px] tracking-wider font-semibold">
+                <th class="py-3 px-3">Profile</th>
+                <th class="py-3 px-3">Teacher ID</th>
+                <th class="py-3 px-4">Name</th>
+                <th class="py-3 px-4">Subjects</th>
+                <th class="py-3 px-4">Assigned Classes</th>
+                <th class="py-3 px-3">Students</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-3">Joined Date</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10" id="teachersTableBody">
+              <!-- Rendered dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 4: STUDENTS & ADMISSION APPROVALS               -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-students" class="admin-tab-content hidden space-y-6 text-left">
+      
+      <!-- 1. PENDING STUDENT ADMISSIONS QUEUE -->
+      <div class="bg-tealbg-800/90 border border-accent-lime/40 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-lg font-display font-semibold text-white">Student Registration Approval Queue</h3>
+              <span id="studentPendingBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent-lime text-tealbg-950">0</span>
+            </div>
+            <p class="text-xs text-tealtext-300 mt-0.5">Review student registrations, verify course and schedule requests, and issue 1-click account activations</p>
+          </div>
+          <button type="button" onclick="refreshStudentData()" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white flex items-center gap-1.5 transition-all">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Refresh Queue</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-tealtext-200 border-collapse">
+            <thead>
+              <tr class="border-b border-white/15 text-white uppercase text-[11px] tracking-wider font-semibold">
+                <th class="py-3 px-3">Student ID</th>
+                <th class="py-3 px-4">Student Name</th>
+                <th class="py-3 px-4">Contact / Phone</th>
+                <th class="py-3 px-4">Course / Level</th>
+                <th class="py-3 px-3">Class Days</th>
+                <th class="py-3 px-3">Duration</th>
+                <th class="py-3 px-3">Class Type</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-3">Registered</th>
+                <th class="py-3 px-4 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10" id="adminStudentAppsTableBody">
+              <!-- Rendered dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. ENROLLED STUDENTS ROSTER -->
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h3 class="text-lg font-display font-semibold text-white">Enrolled Students Directory</h3>
+            <p class="text-xs text-tealtext-300">Active student accounts, schedules, learning tracks, and status management</p>
+          </div>
+
+          <!-- Student Search Input -->
+          <div class="relative w-full md:w-80">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-tealtext-400">
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            </div>
+            <input 
+              type="text" 
+              id="studentSearchInput" 
+              placeholder="Search student by ID, name, contact, or course..." 
+              class="w-full pl-9 pr-4 py-2 rounded-xl bg-tealbg-950/90 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-tealtext-200 border-collapse">
+            <thead>
+              <tr class="border-b border-white/15 text-white uppercase text-[11px] tracking-wider font-semibold">
+                <th class="py-3 px-3">Student ID</th>
+                <th class="py-3 px-4">Student Name</th>
+                <th class="py-3 px-4">Contact</th>
+                <th class="py-3 px-4">Course / Track</th>
+                <th class="py-3 px-3">Class Days</th>
+                <th class="py-3 px-3">Duration</th>
+                <th class="py-3 px-3">Class Type</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10" id="adminStudentsTableBody">
+              <!-- Rendered dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 5: CLASSES & BATCHES                            -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-classes" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">Active Classes & Batches</h3>
+          <p class="text-xs text-tealtext-300">Overview of schedules, assigned faculty, and enrolled capacity</p>
+        </div>
+
+        <div id="adminClassesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Rendered dynamically by admin.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 6: SCHEDULE                                     -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-schedule" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">School Weekly Master Schedule</h3>
+          <p class="text-xs text-tealtext-300">All live class timetables, teacher allocations, and time slots</p>
+        </div>
+
+        <div id="adminScheduleContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+          <!-- Rendered dynamically by admin.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 7: NOTIFICATIONS & AUDIT TRAIL                  -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-notifications" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">Administrative Notifications & Audit Trail</h3>
+          <p class="text-xs text-tealtext-300">System records of teacher approvals, status adjustments, credentials issuance, and audit logs</p>
+        </div>
+
+        <div id="auditLogList" class="space-y-3">
+          <!-- Populated dynamically by admin.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 8: ADMIN USERS MANAGEMENT                       -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-admin-users" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-lg font-display font-semibold text-white">Authorized Administrator Accounts</h3>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                Restricted Access
+              </span>
+            </div>
+            <p class="text-xs text-tealtext-300">
+              Only authenticated administrators can provision additional staff admins. Public admin registration is strictly disabled.
+            </p>
+          </div>
+
+          <!-- Create Admin Button -->
+          <button type="button" onclick="openCreateAdminModal()" class="px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-md flex items-center gap-2 flex-shrink-0">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Create Admin</span>
+          </button>
+        </div>
+
+        <!-- Admin Users List Container -->
+        <div id="adminUsersListContainer" class="space-y-3">
+          <!-- Populated dynamically by admin.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- TAB 9: SETTINGS                                     -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-settings" class="admin-tab-content hidden space-y-6 text-left">
+      <div class="bg-tealbg-800/90 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">Portal & Security Settings</h3>
+          <p class="text-xs text-tealtext-300">Academic session configuration, automated ID prefixing, and security policies</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 space-y-2">
+            <h4 class="font-semibold text-white">Teacher ID Scheme</h4>
+            <p class="text-tealtext-300">Auto-generation prefix: <code class="font-mono text-accent-lime">ZAW-TCH-XXX</code></p>
+            <p class="text-tealtext-300">Sequential auto-increment enabled upon teacher application approval.</p>
+          </div>
+    <!-- ==================================================== -->
+    <!-- TAB 9: REVIEWS & TESTIMONIALS MANAGEMENT            -->
+    <!-- ==================================================== -->
+    <div id="admin-tab-reviews" class="admin-tab-content hidden space-y-6">
+      
+      <!-- Top Action & Overview Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-tealbg-800/80 p-6 rounded-3xl border border-white/15 shadow-xl text-left">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full bg-accent-lime/20 text-accent-lime text-[10px] font-bold uppercase tracking-wider">
+              Public Homepage Content
+            </span>
+            <span class="text-xs text-tealtext-300">Only APPROVED reviews appear on the website</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-display font-semibold text-white">
+            Website Reviews & Testimonials
+          </h2>
+          <p class="text-xs text-tealtext-200 mt-0.5">
+            Manage genuine parent feedback and student testimonials displayed in the community section.
+          </p>
+        </div>
+
+        <button 
+          type="button" 
+          onclick="openAddReviewModal()" 
+          class="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center gap-2 self-start sm:self-auto cursor-pointer flex-shrink-0"
+        >
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Add New Review</span>
+        </button>
+      </div>
+
+      <!-- Stats Metric Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+        <div class="bg-tealbg-800/80 p-5 rounded-2xl border border-white/15 space-y-1">
+          <span class="text-[11px] text-tealtext-300 uppercase font-semibold">Total Reviews</span>
+          <p id="statTotalReviews" class="text-2xl sm:text-3xl font-display font-bold text-white">0</p>
+        </div>
+        <div class="bg-tealbg-800/80 p-5 rounded-2xl border border-accent-lime/30 space-y-1">
+          <span class="text-[11px] text-accent-lime uppercase font-semibold">Approved (Live)</span>
+          <p id="statApprovedReviews" class="text-2xl sm:text-3xl font-display font-bold text-accent-lime">0</p>
+        </div>
+        <div class="bg-tealbg-800/80 p-5 rounded-2xl border border-white/15 space-y-1">
+          <span class="text-[11px] text-tealtext-400 uppercase font-semibold">Hidden / Drafts</span>
+          <p id="statHiddenReviews" class="text-2xl sm:text-3xl font-display font-bold text-tealtext-300">0</p>
+        </div>
+      </div>
+
+      <!-- Filter & Search Toolbar -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 text-xs">
+        <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+          <button type="button" onclick="filterAdminReviews('ALL')" class="review-filter-btn active px-3.5 py-1.5 rounded-full bg-accent-lime text-tealbg-950 font-bold transition-all" data-filter="ALL">
+            All Reviews
+          </button>
+          <button type="button" onclick="filterAdminReviews('APPROVED')" class="review-filter-btn px-3.5 py-1.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all" data-filter="APPROVED">
+            Approved (Live)
+          </button>
+          <button type="button" onclick="filterAdminReviews('HIDDEN')" class="review-filter-btn px-3.5 py-1.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all" data-filter="HIDDEN">
+            Hidden
+          </button>
+        </div>
+
+        <div class="w-full sm:w-64">
+          <input 
+            type="text" 
+            id="adminReviewSearch" 
+            placeholder="Search by reviewer or quote..." 
+            oninput="handleAdminReviewSearch(this.value)"
+            class="w-full px-3.5 py-2 rounded-xl bg-tealbg-800 border border-white/20 text-white placeholder-tealtext-400 text-xs focus:outline-none focus:border-accent-lime"
+          />
+        </div>
+      </div>
+
+      <!-- Reviews Grid / Cards Container -->
+      <div id="adminReviewsList" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 1: APPLICATION DOSSIER & VERIFICATION DECISION -->
+  <!-- ==================================================== -->
+  <div id="appDossierModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-2xl bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left my-8 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3.5">
+          <div id="modalApplicantInitials" class="w-12 h-12 rounded-2xl bg-accent-lavender text-tealbg-950 font-display font-bold text-xl flex items-center justify-center">
+            AS
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="modalApplicantName" class="text-xl font-display font-semibold text-white"></h3>
+              <span id="modalAppStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300">
+                PENDING
+              </span>
+            </div>
+            <p id="modalAppMeta" class="text-xs text-tealtext-300"></p>
+          </div>
+        </div>
+        <button type="button" onclick="closeDossierModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body Details -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-tealtext-300">Contact Information</span>
+          <p><span class="text-tealtext-400">WhatsApp / Phone:</span> <span id="modalPhone" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Location / City:</span> <span id="modalLocation" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Applicant ID:</span> <span id="modalAppIdBadge" class="font-mono text-accent-lime font-bold"></span></p>
+        </div>
+
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-tealtext-300">Teaching Profile & Schedule</span>
+          <p><span class="text-tealtext-400">Class Type:</span> <span id="modalClassType" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Class Days:</span> <span id="modalDays" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Class Time:</span> <span id="modalTime" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Daily Duration:</span> <span id="modalDailyDuration" class="text-accent-lime font-medium"></span></p>
+          <p><span class="text-tealtext-400">Weekly Hours:</span> <span id="modalWeeklyHours" class="text-white font-medium"></span></p>
+          <p><span class="text-tealtext-400">Est. Monthly Hours:</span> <span id="modalMonthlyHours" class="text-accent-lime font-bold"></span></p>
+        </div>
+
+        <div id="modalStudentSection" class="sm:col-span-2 bg-tealbg-900/90 p-4 rounded-2xl border border-accent-lime/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1.5">
+              <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+              <span>Assigned Student / Learner Details</span>
+            </span>
+            <span id="modalStudentLevelBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-accent-lime/20 text-accent-lime">
+              Foundation
+            </span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
+            <div>
+              <span class="text-[10px] text-tealtext-400 uppercase font-semibold block">Student Name</span>
+              <p id="modalStudentName" class="text-white font-medium">None</p>
+            </div>
+            <div>
+              <span class="text-[10px] text-tealtext-400 uppercase font-semibold block">Age</span>
+              <p id="modalStudentAge" class="text-white font-medium">N/A</p>
+            </div>
+            <div>
+              <span class="text-[10px] text-tealtext-400 uppercase font-semibold block">Place</span>
+              <p id="modalStudentPlace" class="text-white font-medium">N/A</p>
+            </div>
+            <div>
+              <span class="text-[10px] text-tealtext-400 uppercase font-semibold block">Learning Level</span>
+              <p id="modalStudentLevelText" class="text-accent-lime font-bold">Foundation</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm:col-span-2 bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-tealtext-300">Subjects Selected</span>
+          <div id="modalSubjectsList" class="flex flex-wrap gap-2 pt-1"></div>
+        </div>
+
+        <div class="sm:col-span-2 bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-tealtext-300">Teaching Experience & Credentials</span>
+          <p id="modalExperience" class="text-tealtext-100 leading-relaxed font-normal"></p>
+        </div>
+
+        <div class="sm:col-span-2 bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-tealtext-300">Applicant Notes / Cover Message</span>
+          <p id="modalNotes" class="text-tealtext-100 leading-relaxed font-normal"></p>
+        </div>
+
+        <div id="modalApprovedBanner" class="hidden sm:col-span-2 bg-accent-lime/15 border border-accent-lime/40 p-4 rounded-2xl space-y-1">
+          <p class="text-xs font-bold text-accent-lime uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Account Active & Approved</span>
+          </p>
+          <p class="text-xs text-white">Assigned Teacher ID: <code id="modalAssignedTeacherId" class="bg-tealbg-950 px-2 py-0.5 rounded font-mono font-bold text-accent-lime"></code></p>
+        </div>
+
+        <div id="modalRejectedBanner" class="hidden sm:col-span-2 bg-red-500/15 border border-red-400/40 p-4 rounded-2xl space-y-1">
+          <p class="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="x-circle" class="w-4 h-4"></i>
+            <span>Application Rejected</span>
+          </p>
+          <p id="modalRejectionReason" class="text-xs text-tealtext-100"></p>
+        </div>
+      </div>
+
+      <!-- Rejection Input Section -->
+      <div id="rejectionInputArea" class="hidden space-y-2 bg-red-500/10 border border-red-400/30 p-4 rounded-2xl">
+        <label for="rejectionReasonInput" class="block text-xs font-semibold text-red-200">
+          Reason for Rejection:
+        </label>
+        <textarea 
+          id="rejectionReasonInput" 
+          rows="2" 
+          placeholder="e.g. Requires certified Tajweed Ijazah or at least 2 years formal teaching experience."
+          class="w-full p-3 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs placeholder-tealtext-400 focus:outline-none focus:border-red-400 transition-all"
+        ></textarea>
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button type="button" onclick="cancelRejectMode()" class="px-3 py-1.5 rounded-lg text-xs text-tealtext-200 hover:text-white bg-white/10 transition-all">
+            Cancel
+          </button>
+          <button type="button" id="confirmRejectBtn" class="px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider bg-red-500 text-white hover:bg-red-600 transition-all shadow">
+            Confirm Rejection
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div id="modalActionFooter" class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-white/10">
+        <button type="button" onclick="closeDossierModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-medium text-tealtext-200 hover:text-white bg-white/10 hover:bg-white/20 transition-all">
+          Close Window
+        </button>
+
+        <div id="pendingActionBtns" class="flex items-center gap-3 w-full sm:w-auto">
+          <button type="button" id="openRejectBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-red-200 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 transition-all flex items-center justify-center gap-1.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            <span>Reject Application</span>
+          </button>
+
+          <button type="button" id="approveTeacherBtn" class="w-full sm:w-auto px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Approve Teacher & Issue ID</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 2: COMPLETE TEACHER PROFILE & DOSSIER        -->
+  <!-- ==================================================== -->
+  <div id="teacherFullProfileModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-4xl bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left my-8 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Top Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/15 pb-4">
+        <div class="flex items-center gap-3.5">
+          <div id="tProfAvatar" class="w-14 h-14 rounded-2xl bg-accent-lavender text-tealbg-950 font-display font-bold text-2xl flex items-center justify-center flex-shrink-0">
+            TC
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="tProfFullName" class="text-2xl font-display font-semibold text-white"></h3>
+              <span id="tProfStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-accent-lime/20 text-accent-lime border border-accent-lime/30">
+                ACTIVE
+              </span>
+            </div>
+            <p id="tProfSubMeta" class="text-xs text-tealtext-300 mt-0.5"></p>
+          </div>
+        </div>
+
+        <!-- Top Profile Action Buttons -->
+        <div class="flex items-center gap-2 flex-wrap self-end md:self-center">
+          <button type="button" id="tProfManageStatusBtn" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow-sm flex items-center gap-1.5">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+            <span>Manage Status</span>
+          </button>
+          <button type="button" id="tProfEditBtn" class="px-3.5 py-2 rounded-full text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all flex items-center gap-1.5">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>Edit Teacher</span>
+          </button>
+          <button type="button" onclick="closeTeacherFullProfileModal()" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Nav Shortcuts -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs border-b border-white/10">
+        <button type="button" onclick="switchAdminTab('classes')" class="px-3 py-1.5 rounded-xl bg-tealbg-900 text-tealtext-200 hover:text-white flex items-center gap-1">
+          <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+          <span>View Classes</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('students')" class="px-3 py-1.5 rounded-xl bg-tealbg-900 text-tealtext-200 hover:text-white flex items-center gap-1">
+          <i data-lucide="users" class="w-3.5 h-3.5"></i>
+          <span>View Students</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('schedule')" class="px-3 py-1.5 rounded-xl bg-tealbg-900 text-tealtext-200 hover:text-white flex items-center gap-1">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span>View Schedule</span>
+        </button>
+      </div>
+
+      <!-- Profile Grid Information -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        
+        <!-- 1. Personal Details -->
+        <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 space-y-2.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i> Personal Details
+          </span>
+          <div class="space-y-1 text-tealtext-200">
+            <p><span class="text-tealtext-400">Full Name:</span> <span id="tProfNameVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Teacher ID:</span> <span id="tProfIdVal" class="font-mono text-accent-lime font-bold"></span></p>
+            <p><span class="text-tealtext-400">WhatsApp / Contact:</span> <span id="tProfPhoneVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Country & Place:</span> <span id="tProfLocVal" class="text-white font-medium"></span></p>
+          </div>
+        </div>
+
+        <!-- 2. Teaching Details -->
+        <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 space-y-2.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i> Teaching Details
+          </span>
+          <div class="space-y-1 text-tealtext-200">
+            <p><span class="text-tealtext-400">Subjects:</span> <span id="tProfSubjectsVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Class Type:</span> <span id="tProfClassTypeVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Teaching Status:</span> <span id="tProfTeachingStatusVal" class="font-bold"></span></p>
+            <p><span class="text-tealtext-400">Start Date:</span> <span id="tProfStartDateVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Experience:</span> <span id="tProfExpVal" class="text-tealtext-100"></span></p>
+          </div>
+        </div>
+
+        <!-- 3. Schedule & Hours Breakdown -->
+        <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 space-y-2.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Teaching Schedule
+          </span>
+          <div class="space-y-1 text-tealtext-200">
+            <p><span class="text-tealtext-400">Class Days:</span> <span id="tProfDaysVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Class Timing:</span> <span id="tProfTimeVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Daily Duration:</span> <span id="tProfDailyDurVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Weekly Hours:</span> <span id="tProfWeeklyHoursVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Est. Monthly Hours:</span> <span id="tProfMonthlyHoursVal" class="text-accent-lime font-bold"></span></p>
+          </div>
+        </div>
+
+        <!-- 4. Classes & Students -->
+        <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 space-y-2.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1">
+            <i data-lucide="users" class="w-3.5 h-3.5"></i> Classes & Students
+          </span>
+          <div class="space-y-1 text-tealtext-200">
+            <p><span class="text-tealtext-400">Assigned Classes:</span> <span id="tProfAssignedClassesVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Active Students:</span> <span id="tProfActiveStudentsVal" class="text-accent-lime font-bold"></span></p>
+            <p><span class="text-tealtext-400">Historical / Previous Students:</span> <span id="tProfPrevStudentsVal" class="text-white font-medium"></span></p>
+            <p><span class="text-tealtext-400">Attendance Rating:</span> <span id="tProfAttRatingVal" class="text-accent-lime font-bold"></span></p>
+          </div>
+        </div>
+
+        <!-- 5. Status History & Audit Notes -->
+        <div class="bg-tealbg-900/80 p-5 rounded-2xl border border-white/10 sm:col-span-2 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-accent-lime flex items-center gap-1">
+              <i data-lucide="history" class="w-3.5 h-3.5"></i> Status Lifecycle History & Administrative Notes
+            </span>
+            <span class="text-[10px] text-tealtext-400">Historical Archive Retained</span>
+          </div>
+          <div id="tProfStatusHistoryList" class="space-y-2 max-h-40 overflow-y-auto">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 3: MANAGE TEACHER STATUS                      -->
+  <!-- ==================================================== -->
+  <div id="manageStatusModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-md bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 text-left my-8">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">Manage Teacher Status</h3>
+          <p id="manageStatusTargetTeacher" class="text-xs text-tealtext-300"></p>
+        </div>
+        <button type="button" onclick="closeManageStatusModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-tealtext-100">Select Status Action:</label>
+        
+        <!-- Status Option Buttons Grid -->
+        <div id="statusButtonsGrid" class="grid grid-cols-1 gap-2 text-xs">
+          <!-- Populated dynamically based on current status -->
+        </div>
+
+        <!-- Reason / Notes Input Area -->
+        <div id="statusReasonSection" class="space-y-1.5 pt-2">
+          <label for="statusReasonInput" class="block text-xs font-semibold text-tealtext-100">
+            Reason / Administrative Notes <span class="text-tealtext-400">(Saved to permanent history)</span>:
+          </label>
+          <textarea 
+            id="statusReasonInput" 
+            rows="3" 
+            placeholder="e.g. Teacher resigned due to relocation / Temporary leave / Reactivated for new semester"
+            class="w-full p-3 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs placeholder-tealtext-400 focus:outline-none focus:border-accent-lime"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-3 border-t border-white/10">
+        <button type="button" onclick="closeManageStatusModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 4: EDIT TEACHER DETAILS                      -->
+  <!-- ==================================================== -->
+  <div id="editTeacherModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-lg bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 text-left my-8 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
+        <div>
+          <h3 class="text-lg font-display font-semibold text-white">Edit Teacher Profile</h3>
+          <p id="editTeacherIdTitle" class="text-xs text-tealtext-300"></p>
+        </div>
+        <button type="button" onclick="closeEditTeacherModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="editTeacherForm" class="space-y-4 text-xs" novalidate>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Full Name</label>
+            <input type="text" id="editTeacherName" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Contact Number (WhatsApp)</label>
+            <input type="tel" id="editTeacherPhone" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Country</label>
+            <input type="text" id="editTeacherCountry" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Place / City</label>
+            <input type="text" id="editTeacherPlace" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-semibold text-tealtext-100">Teaching Subjects (comma separated)</label>
+          <input type="text" id="editTeacherSubjects" required class="w-full px-3.5 py-2 rounded-xl bg-tealbg-900 border border-white/20 text-white" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-semibold text-tealtext-100">Experience & Bio</label>
+          <textarea id="editTeacherExperience" rows="2" class="w-full p-3 rounded-xl bg-tealbg-900 border border-white/20 text-white"></textarea>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-white/10">
+          <button type="button" onclick="closeEditTeacherModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow">
+            Save Changes
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 5: CREATE ADDITIONAL ADMIN USER               -->
+  <!-- ==================================================== -->
+  <div id="createAdminModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-md bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left my-8">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-400/20 text-amber-300 flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-display font-semibold text-white">Create Admin Account</h3>
+            <p class="text-xs text-tealtext-300">Authorized staff provisioning</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCreateAdminModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="createAdminForm" class="space-y-4" novalidate autocomplete="off">
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-tealtext-100">
+            Generated Admin ID <span class="text-amber-300">(Auto-Assigned)</span>
+          </label>
+          <input 
+            type="text" 
+            id="newAdminGeneratedId" 
+            readonly 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-950/80 border border-amber-400/40 text-amber-300 font-mono font-bold text-xs select-none cursor-not-allowed"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label for="newAdminName" class="block text-xs font-medium text-tealtext-100">Full Name <span class="text-amber-300">*</span></label>
+          <input type="text" id="newAdminName" placeholder="e.g. Academic Coordinator" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs focus:outline-none focus:border-amber-300" />
+        </div>
+
+        <div class="space-y-1">
+          <label for="newAdminEmail" class="block text-xs font-medium text-tealtext-100">Email Address <span class="text-amber-300">*</span></label>
+          <input type="email" id="newAdminEmail" placeholder="e.g. coordinator@zawiyah.school" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs focus:outline-none focus:border-amber-300" />
+        </div>
+
+        <div class="space-y-1">
+          <label for="newAdminPassword" class="block text-xs font-medium text-tealtext-100">Password <span class="text-amber-300">*</span></label>
+          <input type="password" id="newAdminPassword" placeholder="Min 8 chars (1 upper, 1 lower, 1 num)" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs focus:outline-none focus:border-amber-300" />
+        </div>
+
+        <div class="space-y-1">
+          <label for="newAdminConfirmPassword" class="block text-xs font-medium text-tealtext-100">Confirm Password <span class="text-amber-300">*</span></label>
+          <input type="password" id="newAdminConfirmPassword" placeholder="Confirm password" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs focus:outline-none focus:border-amber-300" />
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeCreateAdminModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10">
+            Cancel
+          </button>
+          <button type="submit" id="newAdminSubmitBtn" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-amber-400 hover:bg-amber-300 transition-all shadow">
+            Create Admin
+          </button>
+        </div>
+  <!-- ==================================================== -->
+  <!-- MODAL 6: STUDENT FULL PROFILE DOSSIER               -->
+  <!-- ==================================================== -->
+  <div id="studentFullProfileModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-2xl bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left my-8 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3.5">
+          <div id="sProfInitials" class="w-12 h-12 rounded-2xl bg-accent-lime text-tealbg-950 font-display font-bold text-xl flex items-center justify-center">
+            ST
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-xl font-display font-semibold text-white" id="sProfFullName">Student Name</h3>
+              <span id="sProfStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-accent-lime/20 text-accent-lime border border-accent-lime/30">
+                ACTIVE
+              </span>
+            </div>
+            <p class="text-xs text-tealtext-300 font-mono mt-0.5" id="sProfMeta">Student ID: ZAW-STU-001</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeStudentFullProfileModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Student Detail Sections -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Student ID</span>
+          <p class="text-white font-mono font-bold text-sm" id="sProfIdVal">ZAW-STU-001</p>
+        </div>
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Contact / Phone</span>
+          <p class="text-white font-mono font-medium" id="sProfPhoneVal">+91 98460 00000</p>
+        </div>
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Enrolled Course / Track</span>
+          <p class="text-accent-lime font-semibold text-sm" id="sProfCourseVal">Quran & Tajweed</p>
+        </div>
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Class Type</span>
+          <p class="text-white font-medium" id="sProfClassTypeVal">Group Class</p>
+        </div>
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Class Days</span>
+          <p class="text-tealtext-100 font-medium" id="sProfDaysVal">Monday, Wednesday, Friday</p>
+        </div>
+        <div class="bg-tealbg-900/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <span class="text-[10px] text-tealtext-400 uppercase font-semibold">Daily Duration</span>
+          <p class="text-tealtext-100 font-medium" id="sProfDurationVal">60 Minutes</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+        <button type="button" onclick="closeStudentFullProfileModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10 transition-all">
+          Close
+        </button>
+        <button type="button" id="sProfEditBtn" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow flex items-center gap-1.5">
+          <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+          <span>Edit Student</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 7: EDIT STUDENT DETAILS (SAFE PRESERVATION)    -->
+  <!-- ==================================================== -->
+  <div id="editStudentModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-xl bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left my-8 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-accent-lime/20 text-accent-lime flex items-center justify-center">
+            <i data-lucide="user-cog" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-display font-semibold text-white" id="editStudentTitle">Edit Student Details</h3>
+            <p class="text-xs text-tealtext-300">Non-destructive profile updates</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeEditStudentModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="editStudentForm" class="space-y-4" novalidate autocomplete="off">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-tealtext-100">Student Full Name</label>
+          <input type="text" id="editStudentName" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Contact Number</label>
+            <input type="text" id="editStudentPhone" required class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs" />
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Account Status</label>
+            <select id="editStudentStatus" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="PENDING APPROVAL">PENDING APPROVAL</option>
+              <option value="INACTIVE">INACTIVE</option>
+              <option value="REJECTED">REJECTED</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-tealtext-100">Course / Learning Track</label>
+          <select id="editStudentCourse" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+            <option value="Quran & Tajweed">Quran & Tajweed</option>
+            <option value="Hifz Program">Hifz Program</option>
+            <option value="Islamic Studies">Islamic Studies</option>
+            <option value="Arabic Language">Arabic Language</option>
+            <option value="Hadith & Sunnah">Hadith & Sunnah</option>
+            <option value="Islamic Jurisprudence (Fiqh)">Islamic Jurisprudence (Fiqh)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Daily Duration</label>
+            <select id="editStudentDuration" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="30 Minutes">30 Minutes</option>
+              <option value="45 Minutes">45 Minutes</option>
+              <option value="60 Minutes">60 Minutes (1.0 hr)</option>
+              <option value="90 Minutes">90 Minutes (1.5 hrs)</option>
+              <option value="120 Minutes">120 Minutes (2.0 hrs)</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Class Type</label>
+            <select id="editStudentClassType" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="Group Class">Group Class</option>
+              <option value="One-to-One">One-to-One</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+          <button type="button" onclick="closeEditStudentModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10">
+            Cancel
+          </button>
+          <button type="submit" id="saveStudentEditBtn" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow">
+            Save Changes
+          </button>
+        </div>
+      </form>
+
+  <!-- ==================================================== -->
+  <!-- MODAL: ADD / EDIT REVIEW                           -->
+  <!-- ==================================================== -->
+  <div id="reviewModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-lg bg-tealbg-800 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 text-left my-8 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
+        <div>
+          <h3 id="reviewModalTitle" class="text-lg font-display font-semibold text-white">Add Review / Testimonial</h3>
+          <p class="text-xs text-tealtext-300">Only APPROVED reviews will be publicly visible on the homepage.</p>
+        </div>
+        <button type="button" onclick="closeReviewModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="reviewForm" onsubmit="handleReviewFormSubmit(event)" class="space-y-4 text-xs" novalidate>
+        <input type="hidden" id="reviewEditId" value="" />
+
+        <div class="space-y-1">
+          <label class="block font-semibold text-tealtext-100">Reviewer Display Name <span class="text-accent-lime">*</span></label>
+          <input 
+            type="text" 
+            id="reviewInputName" 
+            placeholder="e.g. Parent of a Zawiyah Student / Parent of Gulf Batch Student" 
+            required 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs placeholder-tealtext-400 focus:outline-none focus:border-accent-lime" 
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Reviewer Type <span class="text-accent-lime">*</span></label>
+            <select id="reviewInputType" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="Parent">Parent</option>
+              <option value="Student">Student</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Rating (Stars) <span class="text-accent-lime">*</span></label>
+            <select id="reviewInputRating" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="5">★★★★★ (5 Stars)</option>
+              <option value="4">★★★★☆ (4 Stars)</option>
+              <option value="3">★★★☆☆ (3 Stars)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Course / Learning Track</label>
+            <input 
+              type="text" 
+              id="reviewInputCourse" 
+              placeholder="e.g. One-to-One Classes / Group Classes" 
+              class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs placeholder-tealtext-400 focus:outline-none focus:border-accent-lime" 
+            />
+          </div>
+          <div class="space-y-1">
+            <label class="block font-semibold text-tealtext-100">Status <span class="text-accent-lime">*</span></label>
+            <select id="reviewInputStatus" class="w-full px-3.5 py-2.5 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs">
+              <option value="APPROVED">APPROVED (Live on website)</option>
+              <option value="HIDDEN">HIDDEN (Draft / Hidden)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-semibold text-tealtext-100">Review Text / Testimonial Quote <span class="text-accent-lime">*</span></label>
+          <textarea 
+            id="reviewInputText" 
+            rows="4" 
+            required
+            placeholder="Enter the genuine testimonial quote here..."
+            class="w-full p-3 rounded-xl bg-tealbg-900 border border-white/20 text-white text-xs placeholder-tealtext-400 focus:outline-none focus:border-accent-lime"
+          ></textarea>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-white/10">
+          <button type="button" onclick="closeReviewModal()" class="px-4 py-2 rounded-full text-xs text-tealtext-200 hover:text-white bg-white/10">
+            Cancel
+          </button>
+          <button type="submit" id="saveReviewBtn" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-tealbg-950 bg-accent-lime hover:bg-white transition-all shadow">
+            Save Review
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MINIMAL CLEAN FOOTER -->
+  <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-6 border-t border-white/15 text-xs text-tealtext-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="font-display font-semibold text-white text-sm tracking-tight flex items-center gap-2">
+        <img src="assets/logo.png" alt="Zawiyah Logo" class="h-6 w-auto object-contain" />
+        <span>Zawiyah</span>
+      </a>
+      <span class="text-white/30">•</span>
+      <span>Administrative Governance Portal</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="hover:text-white transition-colors">Public Website</a>
+      <a href="teacher-login.html" class="hover:text-white transition-colors">Teacher Portal</a>
+      <a href="student-portal.html" class="hover:text-white transition-colors">Student Portal</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="admin.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Prevent back-button viewing of cached admin portal after logout
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        var rawSession = sessionStorage.getItem('zawiyah_auth_session') || localStorage.getItem('zawiyah_auth_session');
+        var session = rawSession ? JSON.parse(rawSession) : null;
+        var isAdminFlag = localStorage.getItem('zawiyah_admin_logged_in') === 'true' || sessionStorage.getItem('zawiyah_admin_logged_in') === 'true';
+        if (!session || session.role !== 'ADMIN' || !isAdminFlag) {
+          window.location.replace('admin-login.html');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,880 @@
+/* Zawiyah Online Islamic School - Premium Clean Styling */
+/* Primary Palette: #147382 Teal with luminous gradient accents */
+
+:root {
+  --color-primary-bg: #0A4F5C;
+  --color-card-bg: rgba(8, 50, 57, 0.7);
+  --color-dark-teal: #052227;
+  --color-text-main: #FFFFFF;
+  --color-text-muted: #DCEDF2;
+  --color-border-subtle: rgba(255, 255, 255, 0.15);
+  --color-accent-lime: #baed2c;
+  --color-accent-gold: #fbbf24;
+  --color-accent-lavender: #c188d5;
+}
+
+/* Base resets & typography */
+html {
+  background-color: #083239;
+  color: var(--color-text-main);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  background: linear-gradient(160deg, #0A4F5C 0%, #085966 28%, #0E6472 55%, #0A4652 80%, #052227 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: #FFFFFF;
+  color: #0A4F5C;
+}
+
+/* Enable hardware acceleration & content-visibility for lag-free 60fps mobile scrolling */
+.scroll-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 400px;
+}
+
+/* ==========================================================================
+   PURE ZAWIYAH TEAL CLEAN BACKGROUND (No background bubbles/blobs)
+   ========================================================================== */
+.ambient-glow,
+#dotsCanvas {
+  display: none !important;
+}
+
+/* ==========================================================================
+   NAVBAR BRAND LOGO (Pure Transparency & Crisp Contrast)
+   ========================================================================== */
+.navbar-brand-logo {
+  background: transparent !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
+/* ==========================================================================
+   GRADIENT TEXT CLASSES
+   ========================================================================== */
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2F6F9 55%, #baed2c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-lime {
+  background: linear-gradient(135deg, #FFFFFF 0%, #d8f870 50%, #baed2c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #FFFDF0 0%, #FDE68A 50%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-lavender {
+  background: linear-gradient(135deg, #FFFFFF 0%, #E9D5FF 50%, #C188D5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-teal {
+  background: linear-gradient(135deg, #E2F6F9 0%, #9DCBD5 60%, #1A8798 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   GRADIENT BADGES & PILLS
+   ========================================================================== */
+.gradient-badge {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 16px -2px rgba(5, 34, 39, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.gradient-badge:hover {
+  border-color: rgba(186, 237, 44, 0.5);
+  box-shadow: 0 6px 20px -2px rgba(186, 237, 44, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ==========================================================================
+   GRADIENT BUTTONS
+   ========================================================================== */
+.btn-gradient-white {
+  background: linear-gradient(135deg, #FFFFFF 0%, #E8F8FA 100%);
+  color: #083239;
+  box-shadow: 0 10px 25px -4px rgba(5, 34, 39, 0.3), inset 0 1px 0 #FFFFFF;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient-white:hover {
+  background: linear-gradient(135deg, #FFFFFF 0%, #DCEDF2 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -4px rgba(5, 34, 39, 0.4), 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.btn-gradient-lime {
+  background: linear-gradient(135deg, #c6f43e 0%, #baed2c 50%, #9ddc17 100%);
+  color: #052227;
+  box-shadow: 0 10px 24px -4px rgba(186, 237, 44, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient-lime:hover {
+  background: linear-gradient(135deg, #d3f75e 0%, #c4f338 50%, #abed22 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px -4px rgba(186, 237, 44, 0.6), 0 0 20px rgba(186, 237, 44, 0.4);
+}
+
+.btn-gradient-amber {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 50%, #f59e0b 100%);
+  color: #052227;
+  box-shadow: 0 10px 24px -4px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient-amber:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 50%, #fbbf24 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px -4px rgba(245, 158, 11, 0.55), 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.btn-gradient-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px -3px rgba(5, 34, 39, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient-glass:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -3px rgba(5, 34, 39, 0.35), 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.btn-gradient-demo {
+  background: linear-gradient(135deg, #baed2c 0%, #d8f870 50%, #c188d5 100%);
+  color: #052227;
+  font-weight: 800;
+  box-shadow: 0 8px 24px -4px rgba(186, 237, 44, 0.5), 0 0 16px rgba(193, 136, 213, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient-demo:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 32px -4px rgba(186, 237, 44, 0.65), 0 0 24px rgba(193, 136, 213, 0.5);
+}
+
+.demo-badge-pulse {
+  animation: demoBadgeGlow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes demoBadgeGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(186, 237, 44, 0.3), 0 4px 14px rgba(5, 34, 39, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 22px rgba(186, 237, 44, 0.75), 0 0 14px rgba(193, 136, 213, 0.5), 0 6px 20px rgba(5, 34, 39, 0.4);
+  }
+}
+
+/* ==========================================================================
+   GLASS & GRADIENT CARD STYLES
+   ========================================================================== */
+.glass-card-teal {
+  background: linear-gradient(145deg, rgba(20, 115, 130, 0.65) 0%, rgba(14, 84, 96, 0.85) 50%, rgba(8, 50, 57, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 48px -12px rgba(5, 34, 39, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.option-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 248, 250, 0.94) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 16px 36px -10px rgba(5, 34, 39, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.is-revealed .option-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(186, 237, 44, 0.6);
+  box-shadow: 0 26px 52px -12px rgba(5, 34, 39, 0.32), 0 0 24px rgba(186, 237, 44, 0.22), inset 0 1px 0 #FFFFFF;
+}
+
+/* ==========================================================================
+   HERO SLIDE & UNIFIED CONTENT GROUP (Mobile-First Structure)
+   ========================================================================== */
+.hero-slide {
+  min-height: calc(100svh - 76px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(8px, 1.8svh, 24px);
+  padding-bottom: clamp(16px, 3svh, 32px);
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .hero-slide {
+    min-height: calc(100vh - 90px);
+    padding-top: 24px;
+    padding-bottom: 48px;
+  }
+}
+
+.hero-slide-inner {
+  width: 100%;
+}
+
+/* 1. Hero Character Display */
+.hero-character-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .hero-character-container {
+    justify-content: flex-end;
+  }
+}
+
+/* Character Backdrop Circle */
+.character-backdrop {
+  position: absolute;
+  width: clamp(160px, 30svh, 240px);
+  height: clamp(160px, 30svh, 240px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(186, 237, 44, 0.16) 0%, rgba(20, 115, 130, 0.25) 45%, rgba(8, 50, 57, 0.1) 65%, transparent 75%);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulseAura 6s ease-in-out infinite alternate;
+}
+
+@media (min-width: 640px) {
+  .character-backdrop {
+    width: 340px;
+    height: 340px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .character-backdrop {
+    width: 480px;
+    height: 480px;
+    right: 20px;
+  }
+}
+
+/* Character Wrapper & Float Animation */
+.character-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  animation: floatCharacter 4.5s ease-in-out 0.8s infinite alternate;
+  transform-origin: center bottom;
+  z-index: 10;
+  will-change: transform;
+}
+
+/* Main Family Hero Image */
+.character-image {
+  height: auto;
+  max-height: clamp(170px, 28svh, 235px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 24px rgba(4, 25, 29, 0.42));
+  user-select: none;
+  opacity: 0;
+  transform: translateY(20px) scale(0.97);
+  animation: heroCharacterEntrance 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 640px) {
+  .character-image {
+    max-height: 350px;
+  }
+}
+
+@media (min-width: 768px) {
+  .character-image {
+    max-height: 420px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .character-image {
+    max-height: 520px;
+    filter: drop-shadow(0 22px 36px rgba(4, 25, 29, 0.45));
+  }
+}
+
+@media (min-width: 1280px) {
+  .character-image {
+    max-height: 580px;
+  }
+}
+
+/* Floor Ambient Shadow */
+.character-shadow {
+  width: clamp(140px, 35vw, 210px);
+  height: 14px;
+  background: radial-gradient(ellipse at center, rgba(5, 34, 39, 0.6) 0%, rgba(5, 34, 39, 0.2) 55%, transparent 75%);
+  border-radius: 50%;
+  margin-top: -6px;
+  animation: shadowScale 4.5s ease-in-out 0.8s infinite alternate;
+  z-index: 5;
+}
+
+@media (min-width: 640px) {
+  .character-shadow {
+    width: 240px;
+    height: 18px;
+    margin-top: -8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .character-shadow {
+    width: 320px;
+    height: 24px;
+    margin-top: -12px;
+  }
+}
+
+/* Floating Micro Badges & Greeting (Desktop Floating / Mobile Natural Flow) */
+.floating-pill {
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 248, 250, 0.92) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 24px -4px rgba(5, 34, 39, 0.28), inset 0 1px 0 #FFFFFF;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.floating-pill:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: rgba(186, 237, 44, 0.7);
+  box-shadow: 0 14px 28px -4px rgba(5, 34, 39, 0.38), 0 0 16px rgba(186, 237, 44, 0.25);
+}
+
+@media (min-width: 1024px) {
+  .floating-pill-hero {
+    position: absolute;
+    top: 6%;
+    left: 3%;
+    animation: floatPillTop 5s ease-in-out infinite 0.5s;
+  }
+}
+
+@media (max-width: 1023px) {
+  .floating-pill-hero {
+    position: relative;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.75rem;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: heroBrandEntrance 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+  }
+}
+
+.floating-pill-top {
+  top: 6%;
+  left: 3%;
+  animation: floatPillTop 5s ease-in-out infinite 0.5s;
+}
+
+/* 2. Hero Brand Group (Welcome + Logo connected in natural document flow) */
+.hero-brand-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.4svh, 12px);
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: heroBrandEntrance 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 1024px) {
+  .hero-brand-group {
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+.hero-welcome-label {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.hero-logo-wrap {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-logo-img {
+  display: block;
+  width: clamp(230px, 66vw, 300px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .hero-logo-img {
+    width: 320px;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-logo-img {
+    width: 380px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-logo-img {
+    width: 460px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-logo-img {
+    width: 490px;
+  }
+}
+
+/* 3. Hero Actions */
+.hero-actions {
+  margin-top: clamp(12px, 2.4svh, 22px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: heroActionsEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 1024px) {
+  .hero-actions {
+    justify-content: flex-start;
+    margin-top: 26px;
+    gap: 16px;
+  }
+}
+
+/* Entrance & Float Animations */
+@keyframes heroCharacterEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroBrandEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroActionsEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatCharacter {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes shadowScale {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseAura {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.06);
+    opacity: 0.55;
+  }
+}
+
+@keyframes floatPillTop {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .character-wrapper, .character-image, .character-shadow,
+  .hero-brand-group, .hero-actions {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Scroll Reveal Animations */
+.reveal-left {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, transform 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+}
+
+.is-revealed .reveal-left,
+.is-revealed .reveal-right,
+.reveal-left.is-revealed,
+.reveal-right.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.is-revealed .option-card:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.is-revealed .option-card:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.2s;
+}
+
+.is-revealed .option-card:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+/* Clean Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0e5460;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(186, 237, 44, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(186, 237, 44, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+/* Chat Pop In & Scroll Utility */
+@keyframes chatPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.chat-bubble-in {
+  animation: chatPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-scroll::-webkit-scrollbar-track {
+  background: rgba(8, 50, 57, 0.3);
+  border-radius: 4px;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(186, 237, 44, 0.5);
+}
+
+/* World Map Subtle Connection Lines & Pulse */
+@keyframes mapLinePulse {
+  0% {
+    stroke-dashoffset: 160;
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.45;
+  }
+}
+
+.map-connection-line {
+  stroke-dasharray: 6 6;
+  animation: mapLinePulse 14s linear infinite;
+}
+
+@keyframes mapPingSlow {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  75%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.map-ping-slow {
+  animation: mapPingSlow 3.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Dynamic World Map Floating Student Cards */
+#dynamicWorldMapStudents > div {
+  animation: fadeInWorldMapStudent 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInWorldMapStudent {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   INTERACTIVE LEARNING SECTION (Unified Transparent 3D Floating Visual)
+   ========================================================================== */
+#interactive-learning {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
+}
+
+.joyful-study-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-revealed .joyful-study-container {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.joyful-study-aura {
+  position: absolute;
+  width: clamp(240px, 60vw, 540px);
+  height: clamp(140px, 35vw, 260px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(186, 237, 44, 0.14) 0%, rgba(20, 115, 130, 0.22) 45%, rgba(8, 50, 57, 0.08) 65%, transparent 75%);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulseAura 7s ease-in-out infinite alternate;
+}
+
+.joyful-study-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: floatJoyfulStudy 6s ease-in-out infinite alternate;
+  z-index: 10;
+  will-change: transform;
+}
+
+.joyful-study-img {
+  display: block;
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  object-fit: contain;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.joyful-study-img:hover {
+  transform: scale(1.02);
+}
+
+/* Dual Floor Contact Shadows */
+.joyful-study-shadows-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 760px;
+  margin-top: -14px;
+  padding: 0 4%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .joyful-study-shadows-grid {
+    margin-top: -18px;
+    padding: 0 6%;
+  }
+}
+
+/* Left: Ground contact shadow under walking children's feet */
+.joyful-study-shadow-walking {
+  width: clamp(95px, 26vw, 220px);
+  height: clamp(10px, 1.8vw, 16px);
+  background: radial-gradient(ellipse at center, rgba(4, 25, 29, 0.78) 0%, rgba(5, 34, 39, 0.32) 50%, transparent 75%);
+  border-radius: 50%;
+  margin-left: 2%;
+  animation: shadowScale 6s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* Right: Ground contact shadow under sitting children / study desk */
+.joyful-study-shadow-sitting,
+.joyful-study-shadow-desk {
+  width: clamp(140px, 38vw, 340px);
+  height: clamp(12px, 2vw, 18px);
+  background: radial-gradient(ellipse at center, rgba(4, 25, 29, 0.82) 0%, rgba(5, 34, 39, 0.38) 55%, transparent 75%);
+  border-radius: 50%;
+  margin-right: 1%;
+  animation: shadowScale 6s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+@keyframes floatJoyfulStudy {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .joyful-study-wrapper,
+  .joyful-study-img,
+  .joyful-study-shadow-walking,
+  .joyful-study-shadow-desk,
+  .joyful-study-aura {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Navbar Brand Logo - Pure Transparent Background & Sharp Display */
+.navbar-brand-logo {
+  background: transparent !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  mix-blend-mode: normal !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+}
+
+
+

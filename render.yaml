@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: zawiyah-online-school
+    env: python
+    plan: starter
+    buildCommand: "echo 'Build complete'"
+    startCommand: "python3 server.py"
+    healthCheckPath: /api/reviews
+    autoDeploy: true
+    disk:
+      name: zawiyah-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATA_DIR
+        value: /data
+      - key: ZAWIYAH_SECURITY_SALT
+        generateValue: true

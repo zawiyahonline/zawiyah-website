@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Private & Admin Portals
+Disallow: /admin
+Disallow: /admin-portal.html
+Disallow: /admin-login.html
+Disallow: /admin-setup.html
+Disallow: /admin-forgot-password.html
+Disallow: /api/
+
+Sitemap: https://zawiyahonline.com/sitemap.xml

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login | Zawiyah Online Islamic School</title>
+  <meta name="description" content="Secure administrative gateway for Zawiyah Online Islamic School academic management, teacher verification, and course oversight." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23baed2c'><circle cx='12' cy='12' r='10'/></svg>" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tealbg: {
+              DEFAULT: '#147382',
+              400: '#1A8798',
+              500: '#147382',
+              600: '#10616E',
+              700: '#0E5460',
+              800: '#0B434C',
+              900: '#083239',
+              950: '#052227',
+            },
+            tealtext: {
+              50: '#FFFFFF',
+              100: '#F0F8FA',
+              200: '#DCEDF2',
+              300: '#C2E0E7',
+              400: '#9DCBD5',
+              500: '#75B0BC',
+            },
+            accent: {
+              lavender: '#c188d5',
+              lime: '#baed2c',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-tealbg text-white font-sans antialiased selection:bg-white selection:text-tealbg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Ambient Glow & Interactive Canvas Dots -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+    <div class="ambient-glow ambient-glow-1 pointer-events-none"></div>
+    <div class="ambient-glow ambient-glow-2 pointer-events-none"></div>
+    <canvas id="dotsCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+  </div>
+
+  <!-- HEADER NAVBAR -->
+  <header class="relative z-50 w-full pt-5 pb-4 px-4 sm:px-8 md:px-12 max-w-7xl mx-auto flex items-center justify-between transition-all duration-300 border-b border-white/10">
+    <a href="index.html" class="group flex items-center gap-2.5 text-white font-display font-semibold text-xl tracking-tight">
+      <img src="assets/logo.png?v=6" alt="Zawiyah Online Islamic School" class="w-[125px] sm:w-[135px] md:w-[150px] h-auto object-contain select-none" />
+      <span class="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase tracking-wider ml-1">Administration</span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-tealtext-200 hover:text-white bg-white/5 hover:bg-white/15 border border-white/15 rounded-full transition-all duration-200">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Main Website</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ADMIN LOGIN VIEW -->
+  <main class="relative z-20 flex-1 flex items-center justify-center px-4 sm:px-6 py-10">
+    <div class="w-full max-w-md glass-card-teal rounded-3xl p-7 sm:p-9 relative z-30 space-y-6">
+      
+      <!-- Hostname Notice (Shown only if opened directly via file://) -->
+      <div id="fileProtocolWarning" class="hidden p-3 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-xs text-amber-200 text-left space-y-1">
+        <p class="font-bold flex items-center gap-1.5 text-white">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-300"></i>
+          <span>Web Server Access Required</span>
+        </p>
+        <p class="text-[11px]">
+          Please access this portal through your production HTTPS domain or web server address.
+        </p>
+      </div>
+
+      <!-- Card Header -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-400/10 border border-amber-400/30 text-amber-300 shadow-inner mb-1 shadow-amber-400/10">
+          <i data-lucide="shield-check" class="w-7 h-7"></i>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-display font-semibold text-white tracking-tight">
+          Admin <span class="text-gradient-gold">Login</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-tealtext-200">
+          Authorized administrative access for Zawiyah Directorate.
+        </p>
+      </div>
+
+      <!-- Admin Login Form -->
+      <form id="adminLoginForm" class="space-y-4 relative z-30" novalidate autocomplete="off">
+        
+        <!-- Email Field (Clean & Empty by default) -->
+        <div class="space-y-1.5 text-left">
+          <label for="adminEmail" class="block text-xs font-medium text-tealtext-100">
+            Email
+          </label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="email" 
+              id="adminEmail" 
+              name="adminEmail"
+              placeholder="Enter email" 
+              required
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 transition-all"
+            />
+          </div>
+          <p id="adminEmailError" class="hidden text-[11px] text-accent-lavender">Please enter your email.</p>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5 text-left">
+          <div class="flex items-center justify-between">
+            <label for="adminPassword" class="block text-xs font-medium text-tealtext-100">
+              Password
+            </label>
+            <a href="admin-forgot-password.html" class="text-[11px] text-amber-300 hover:text-white transition-colors cursor-pointer">
+              Forgot Password?
+            </a>
+          </div>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-tealtext-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="password" 
+              id="adminPassword" 
+              name="adminPassword"
+              placeholder="Enter password" 
+              required
+              class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-tealbg-950/80 border border-white/20 text-white placeholder-tealtext-400 text-sm focus:outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 transition-all"
+            />
+            <button type="button" id="adminTogglePasswordBtn" aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-tealtext-400 hover:text-white cursor-pointer">
+              <i data-lucide="eye" id="adminToggleEyeIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="adminPassError" class="hidden text-[11px] text-accent-lavender">Please enter your password.</p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center gap-2 text-left pt-1">
+          <input type="checkbox" id="adminRememberMe" checked class="w-4 h-4 rounded text-tealbg-600 focus:ring-amber-300 accent-amber-400 cursor-pointer" />
+          <label for="adminRememberMe" class="text-xs text-tealtext-200 cursor-pointer select-none">Remember this administrative session</label>
+        </div>
+
+        <!-- Error Feedback Alert Container -->
+        <div id="adminLoginAlert" class="hidden p-3.5 rounded-2xl text-left bg-red-500/15 border border-red-400/40 text-xs text-red-300 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px]">
+            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+            <span>Access Denied</span>
+          </div>
+          <p id="adminAlertMsg" class="font-normal text-tealtext-100">Invalid email or password.</p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button 
+            type="submit" 
+            id="adminLoginSubmitBtn"
+            class="btn-gradient-amber w-full py-3.5 px-6 rounded-full text-xs font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span id="loginBtnText">Login</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5" id="loginBtnIcon"></i>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Security Notice Footer -->
+      <div class="pt-3 border-t border-white/10 text-center text-xs text-tealtext-300 space-y-1">
+        <p class="flex items-center justify-center gap-1.5 text-[11px] text-tealtext-300">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-accent-lime"></i>
+          <span>Protected Area: Access restricted to authorized Zawiyah administrators.</span>
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MINIMAL FOOTER -->
+  <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-6 border-t border-white/15 text-xs text-tealtext-300 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="font-display font-semibold text-white text-sm tracking-tight flex items-center gap-2">
+        <img src="assets/logo.png" alt="Zawiyah Logo" class="h-6 w-auto object-contain" />
+        <span>Zawiyah</span>
+      </a>
+      <span class="text-white/30">•</span>
+      <span>Administrative Directorate</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="hover:text-white transition-colors">Main School Home</a>
+      <a href="teacher-login.html" class="hover:text-white transition-colors">Teacher Portal</a>
+      <a href="student-portal.html" class="hover:text-white transition-colors">Student Portal</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+
+      // Check protocol
+      if (window.location.protocol === 'file:') {
+        const fileWarn = document.getElementById('fileProtocolWarning');
+        if (fileWarn) fileWarn.classList.remove('hidden');
+      }
+
+      const emailInput = document.getElementById('adminEmail');
+      const passInput = document.getElementById('adminPassword');
+      const togglePassBtn = document.getElementById('adminTogglePasswordBtn');
+      const toggleEyeIcon = document.getElementById('adminToggleEyeIcon');
+      const form = document.getElementById('adminLoginForm');
+      const alertBox = document.getElementById('adminLoginAlert');
+      const alertMsg = document.getElementById('adminAlertMsg');
+      const submitBtn = document.getElementById('adminLoginSubmitBtn');
+
+      function getApiUrl(endpoint) {
+        return endpoint;
+      }
+
+      // Clear any pre-filled value
+      if (emailInput) emailInput.value = '';
+      if (passInput) passInput.value = '';
+
+      // Password visibility toggle
+      if (togglePassBtn && passInput) {
+        togglePassBtn.addEventListener('click', () => {
+          const isPass = passInput.type === 'password';
+          passInput.type = isPass ? 'text' : 'password';
+          if (toggleEyeIcon) {
+            toggleEyeIcon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
+            if (window.lucide) window.lucide.createIcons();
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------
+      // FORM SUBMISSION (NO CAPTCHA)
+      // -----------------------------------------------------------------
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (alertBox) alertBox.classList.add('hidden');
+
+          const emailVal = emailInput ? emailInput.value.trim() : '';
+          const passVal = passInput ? passInput.value.trim() : '';
+          const remember = document.getElementById('adminRememberMe') ? document.getElementById('adminRememberMe').checked : true;
+
+          const emailErr = document.getElementById('adminEmailError');
+          const passErr = document.getElementById('adminPassError');
+
+          let valid = true;
+          if (!emailVal) {
+            if (emailErr) emailErr.classList.remove('hidden');
+            valid = false;
+          } else {
+            if (emailErr) emailErr.classList.add('hidden');
+          }
+
+          if (!passVal) {
+            if (passErr) passErr.classList.remove('hidden');
+            valid = false;
+          } else {
+            if (passErr) passErr.classList.add('hidden');
+          }
+
+          if (!valid) return;
+
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="animate-spin mr-2">◌</span> Authenticating...`;
+          }
+
+          try {
+            const resp = await fetch(getApiUrl('/api/auth/login'), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: emailVal,
+                password: passVal
+              })
+            });
+
+            const data = await resp.json().catch(() => ({}));
+
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<span>Login</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>`;
+              if (window.lucide) window.lucide.createIcons();
+            }
+
+            if (resp.ok && data.success) {
+              if (window.ZawiyahAuth && data.user) {
+                window.ZawiyahAuth.setSession(data.user, remember);
+              }
+              if (data.token) {
+                localStorage.setItem('zawiyah_admin_token', data.token);
+                sessionStorage.setItem('zawiyah_admin_token', data.token);
+              }
+              localStorage.setItem('zawiyah_admin_logged_in', 'true');
+              sessionStorage.setItem('zawiyah_admin_logged_in', 'true');
+              window.location.replace(data.redirect || 'admin-portal.html');
+            } else {
+              if (alertBox && alertMsg) {
+                alertMsg.textContent = data.message || 'Invalid email or password.';
+                alertBox.classList.remove('hidden');
+              }
+            }
+          } catch (netErr) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<span>Login</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>`;
+              if (window.lucide) window.lucide.createIcons();
+            }
+            if (alertBox && alertMsg) {
+              alertMsg.textContent = 'Network error connecting to local server. Please ensure server is running.';
+              alertBox.classList.remove('hidden');
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
