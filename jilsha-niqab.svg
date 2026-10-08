@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="jilshaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E5460" />
+      <stop offset="100%" stop-color="#083239" />
+    </linearGradient>
+    <linearGradient id="jilshaHijab" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A2D32" />
+      <stop offset="50%" stop-color="#101D20" />
+      <stop offset="100%" stop-color="#091214" />
+    </linearGradient>
+    <linearGradient id="jilshaSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5D7C2" />
+      <stop offset="100%" stop-color="#E8C3A8" />
+    </linearGradient>
+    <linearGradient id="jilshaRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#baed2c" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#147382" stop-opacity="0.3" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <circle cx="50" cy="50" r="48" fill="url(#jilshaBg)" />
+
+  <!-- Outer Hijab Flow -->
+  <path d="M50 14 C33 14 22 28 20 52 C18 68 12 86 6 98 L94 98 C88 86 82 68 80 52 C78 28 67 14 50 14 Z" fill="url(#jilshaHijab)" />
+
+  <!-- Eye Band Area (Modest Opening) -->
+  <path d="M33 37 Q50 35 67 37 Q67 47 50 48 Q33 47 33 37 Z" fill="url(#jilshaSkin)" />
+
+  <!-- Left Eye & Soft Eyebrow -->
+  <path d="M36 36 Q42 34 47 36" stroke="#2B1D14" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8" />
+  <path d="M37 41 Q42 38 46 41" stroke="#12181A" stroke-width="1.8" stroke-linecap="round" fill="none" />
+  <ellipse cx="41.5" cy="41.5" rx="1.8" ry="1.8" fill="#12181A" />
+  <circle cx="42.2" cy="40.8" r="0.6" fill="#FFFFFF" />
+
+  <!-- Right Eye & Soft Eyebrow -->
+  <path d="M53 36 Q58 34 64 36" stroke="#2B1D14" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8" />
+  <path d="M54 41 Q58 38 63 41" stroke="#12181A" stroke-width="1.8" stroke-linecap="round" fill="none" />
+  <ellipse cx="58.5" cy="41.5" rx="1.8" ry="1.8" fill="#12181A" />
+  <circle cx="59.2" cy="40.8" r="0.6" fill="#FFFFFF" />
+
+  <!-- Forehead Hijab Band -->
+  <path d="M31 35 Q50 32 69 35 Q67 38 50 37.5 Q33 38 31 35 Z" fill="#0C1518" />
+
+  <!-- Niqab Veil (Draped gracefully) -->
+  <path d="M29 45 Q50 47 71 45 L76 96 Q50 100 24 96 Z" fill="#111D20" />
+  <!-- Fabric Fold Line Accents -->
+  <path d="M50 48 Q50.5 74 51 97" stroke="#1F343A" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7" />
+  <path d="M40 52 Q43 74 42 95" stroke="#1F343A" stroke-width="0.75" stroke-linecap="round" fill="none" opacity="0.4" />
+  <path d="M60 52 Q57 74 58 95" stroke="#1F343A" stroke-width="0.75" stroke-linecap="round" fill="none" opacity="0.4" />
+
+  <!-- Subtle Outer Accent Ring -->
+  <circle cx="50" cy="50" r="48" fill="none" stroke="url(#jilshaRing)" stroke-width="2" />
+</svg>
